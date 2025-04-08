@@ -33,7 +33,7 @@ fun AppBar(navController: NavHostController, title: String) {
                 }
             }
             if (title != "Settings") {
-                IconButton(onClick = { navController.navigate(TravelDiaryRoute.Settings) }) {
+                IconButton(onClick = { /* TODO */}) {
                     Icon(Icons.Filled.Settings, "Impostazioni")
                 }
             }

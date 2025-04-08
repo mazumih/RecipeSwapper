@@ -18,7 +18,7 @@ fun SwapperNavGraph(navController: NavHostController) {
         startDestination = SwapperRoute.Home,
     ) {
         composable<SwapperRoute.Home> {
-            HomeScreen()
+            HomeScreen(navController)
         }
     }
 }
