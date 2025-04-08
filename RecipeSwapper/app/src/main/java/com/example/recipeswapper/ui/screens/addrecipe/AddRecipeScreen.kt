@@ -1,4 +1,4 @@
-package com.example.recipeswapper.ui.screens
+package com.example.recipeswapper.ui.screens.addrecipe
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,13 +9,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
-import androidx.compose.material.icons.outlined.MyLocation
 import androidx.compose.material.icons.outlined.PhotoCamera
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -43,10 +41,11 @@ fun AddRecipeScreen(
                 onClick = {
                     if(!state.canSubmit) return@FloatingActionButton
                     onSubmit()
+                    actions.clearForm()
                     navController.navigateUp()
                 }
             ) {
-                Icon(Icons.Outlined.Check, "Add Travel")
+                Icon(Icons.Outlined.Check, "Add Recipe")
             }
         }
     ) { contentPadding ->
@@ -63,11 +62,6 @@ fun AddRecipeScreen(
                 onValueChange = actions::setName,
                 label = { Text("Name") },
                 modifier = Modifier.fillMaxWidth(),
-                trailingIcon = {
-                    IconButton(onClick = { /* TODO */ }) {
-                        Icon(Icons.Outlined.MyLocation, "Current location")
-                    }
-                }
             )
             OutlinedTextField(
                 value = state.description,

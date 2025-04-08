@@ -1,4 +1,4 @@
-package com.example.recipeswapper.ui.screens
+package com.example.recipeswapper.ui.screens.addrecipe
 
 import androidx.lifecycle.ViewModel
 import com.example.recipeswapper.data.database.Recipe
@@ -21,6 +21,7 @@ data class AddRecipeState(
 interface AddRecipeActions {
     fun setName(name: String)
     fun setDescription(description: String)
+    fun clearForm()
 }
 
 class AddRecipeViewModel : ViewModel() {
@@ -34,6 +35,10 @@ class AddRecipeViewModel : ViewModel() {
 
         override fun setDescription(description: String) {
             _state.update { it.copy(description = description) }
+        }
+
+        override fun clearForm() {
+            _state.update { it.copy(name = "", description = "") }
         }
     }
 }
