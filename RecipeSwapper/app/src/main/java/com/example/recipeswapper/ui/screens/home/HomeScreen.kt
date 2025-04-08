@@ -95,7 +95,7 @@ fun GridItem(onClick: () -> Unit, item: Recipe) {
         ) {
             Image(
                 Icons.Outlined.Image,
-                "Travel picture",
+                "Recipe picture",
                 contentScale = ContentScale.Fit,
                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryContainer),
                 modifier = Modifier
@@ -135,7 +135,7 @@ fun NoItemsPlaceholder(modifier: Modifier = Modifier) {
             modifier = Modifier.padding(bottom = 8.dp)
         )
         Text(
-            "Tap the + button to add a new trip.",
+            "Tap the + button to add a new recipe.",
             style = MaterialTheme.typography.bodyLarge
         )
     }
