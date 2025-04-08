@@ -10,6 +10,8 @@ import androidx.navigation.toRoute
 import com.example.recipeswapper.RecipeViewModel
 import com.example.recipeswapper.ui.screens.addrecipe.AddRecipeScreen
 import com.example.recipeswapper.ui.screens.addrecipe.AddRecipeViewModel
+import com.example.recipeswapper.ui.screens.badges.BadgeScreen
+import com.example.recipeswapper.ui.screens.badges.BadgeViewModel
 import com.example.recipeswapper.ui.screens.home.HomeScreen
 import com.example.recipeswapper.ui.screens.recipedetails.RecipeDetailsScreen
 import kotlinx.serialization.Serializable
@@ -18,6 +20,7 @@ import org.koin.androidx.compose.koinViewModel
 sealed interface SwapperRoute {
     @Serializable data object Home : SwapperRoute
     @Serializable data object AddRecipe : SwapperRoute
+    @Serializable data object Badge: SwapperRoute
     @Serializable data class RecipeDetails(val recipeId: Int): SwapperRoute
 }
 
@@ -42,6 +45,12 @@ fun SwapperNavGraph(navController: NavHostController) {
                 onSubmit = { recipesVm.addRecipe(state.toRecipe()) },
                 navController
             )
+        }
+        composable<SwapperRoute.Badge> {
+            val badgeVm = koinViewModel<BadgeViewModel>()
+            val badges by badgeVm.state.collectAsStateWithLifecycle()
+            if (recipesState.recipes.size > 3) badgeVm.unlockBadge("Bree")
+            BadgeScreen(badges, navController)
         }
         composable<SwapperRoute.RecipeDetails> { backStackEntry ->
             val route = backStackEntry.toRoute<SwapperRoute.RecipeDetails>()

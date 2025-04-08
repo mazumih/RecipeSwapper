@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import com.example.recipeswapper.ui.SwapperRoute
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,8 +33,8 @@ fun AppBar(navController: NavHostController, title: String) {
                     Icon(Icons.Filled.Search, "Cerca")
                 }
             }
-            if (title != "Settings") {
-                IconButton(onClick = { /* TODO */}) {
+            if (title != "RecipeSwapper") {
+                IconButton(onClick = { navController.navigate(SwapperRoute.Badge)}) {
                     Icon(Icons.Filled.Settings, "Impostazioni")
                 }
             }

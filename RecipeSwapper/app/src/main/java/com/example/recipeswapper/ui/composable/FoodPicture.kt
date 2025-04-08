@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 fun FoodPicture() {
     Image(
         Icons.Outlined.Image,
-        "Travel picture",
+        "Food picture",
         contentScale = ContentScale.Fit,
         colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryContainer),
         modifier = Modifier
