@@ -1,4 +1,4 @@
-package com.example.recipeswapper.ui.screens
+package com.example.recipeswapper.ui.screens.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -17,7 +17,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Image
-import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.NoFood
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FabPosition
@@ -64,7 +64,7 @@ fun HomeScreen(
             ) {
                 items(state.recipes) { item ->
                     GridItem(
-                        onClick = { /* TODO */ },
+                        onClick = { navController.navigate(SwapperRoute.RecipeDetails(item.id)) },
                         item
                     )
                 }
@@ -115,7 +115,6 @@ fun GridItem(onClick: () -> Unit, item: Recipe) {
     }
 }
 
-
 @Composable
 fun NoItemsPlaceholder(modifier: Modifier = Modifier) {
     Column(
@@ -124,12 +123,12 @@ fun NoItemsPlaceholder(modifier: Modifier = Modifier) {
         modifier = Modifier.fillMaxSize()
     ) {
         Icon(
-            Icons.Outlined.LocationOn, "Location icon",
+            Icons.Outlined.NoFood, "No Food icon",
             modifier = Modifier.padding(bottom = 16.dp).size(48.dp),
             tint = MaterialTheme.colorScheme.secondary
         )
         Text(
-            "No items",
+            "No recipes",
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.padding(bottom = 8.dp)
