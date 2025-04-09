@@ -8,21 +8,27 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.NoFood
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -48,11 +54,17 @@ fun HomeScreen(
     Scaffold(
         topBar = { AppBar(navController, "RecipeSwapper") },
         floatingActionButton = {
-            FloatingActionButton( onClick =  { navController.navigate(SwapperRoute.AddRecipe) } ) {
-                Icon(Icons.Filled.Add, "Aggiungi ricetta")
+            FloatingActionButton(
+                onClick = { navController.navigate(SwapperRoute.AddRecipe) },
+                containerColor = MaterialTheme.colorScheme.primary ,
+                modifier = Modifier
+                    .offset(y = (+44).dp)
+            ) {
+                Icon(Icons.Default.Add, "Add")
             }
         },
-        floatingActionButtonPosition = FabPosition.Center
+        floatingActionButtonPosition = FabPosition.Center,
+        bottomBar = { BottomBar(navController, "RecipeSwapper") },
     ) { contentPadding ->
         if(state.recipes.isNotEmpty()) {
             LazyVerticalGrid(
@@ -137,5 +149,27 @@ fun NoItemsPlaceholder(modifier: Modifier = Modifier) {
             "Tap the + button to add a new recipe.",
             style = MaterialTheme.typography.bodyLarge
         )
+    }
+}
+
+@Composable
+fun BottomBar(navController: NavHostController, title: String) {
+    BottomAppBar(
+        tonalElevation = 6.dp,
+        containerColor = MaterialTheme.colorScheme.surface
+    ) {
+        IconButton(onClick = {
+            if(title != "RecipeSwapper") {
+                navController.navigate(SwapperRoute.Home)
+            }
+        }) {
+            Icon(Icons.Filled.Home, contentDescription = "Home")
+        }
+        Spacer(Modifier.weight(1f))
+        Spacer(Modifier.width(56.dp))
+        Spacer(Modifier.weight(1f))
+        IconButton(onClick = { navController.navigate(SwapperRoute.Profile) }) {
+            Icon(Icons.Filled.Person, contentDescription = "Profile")
+        }
     }
 }
