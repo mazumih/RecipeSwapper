@@ -16,7 +16,9 @@ class BadgeViewModel : ViewModel() {
     private val _state = MutableStateFlow(
         listOf(
             Badge("Bree", R.drawable.bree_badge, isUnlocked = false),
-            Badge("Susan", R.drawable.susan_badge, isUnlocked = false)
+            Badge("Susan", R.drawable.susan_badge, isUnlocked = false),
+            Badge("Lynette", R.drawable.lynette_badge, isUnlocked = false),
+            Badge("Gabrielle", R.drawable.gabrielle_badge, isUnlocked = false)
         )
     )
     val state = _state.asStateFlow()

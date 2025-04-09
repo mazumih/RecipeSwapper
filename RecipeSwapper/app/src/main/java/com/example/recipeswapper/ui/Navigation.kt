@@ -49,6 +49,7 @@ fun SwapperNavGraph(navController: NavHostController) {
         composable<SwapperRoute.Badge> {
             val badgeVm = koinViewModel<BadgeViewModel>()
             val badges by badgeVm.state.collectAsStateWithLifecycle()
+            // questo dovrebbe andare da qualche altra parte
             if (recipesState.recipes.size > 3) badgeVm.unlockBadge("Bree")
             BadgeScreen(badges, navController)
         }
@@ -60,8 +61,6 @@ fun SwapperNavGraph(navController: NavHostController) {
                     recipe,
                     navController
                 )
-            } ?: run {
-                navController.navigateUp()
             }
         }
     }
