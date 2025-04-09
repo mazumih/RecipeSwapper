@@ -48,7 +48,7 @@ fun RecipeDetailsScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(contentPadding).padding(12.dp).fillMaxSize()
         ) {
-            Picture("Immagine cibo")
+            Picture("Food picture")
             Text(
                 recipe.name,
                 style = MaterialTheme.typography.titleLarge

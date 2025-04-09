@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.example.recipeswapper.RecipeViewModel
+import com.example.recipeswapper.ui.screens.addevent.AddEventScreen
 import com.example.recipeswapper.ui.screens.addrecipe.AddRecipeScreen
 import com.example.recipeswapper.ui.screens.addrecipe.AddRecipeViewModel
 import com.example.recipeswapper.ui.screens.badges.BadgeScreen
@@ -24,6 +25,7 @@ sealed interface SwapperRoute {
     @Serializable data object AddRecipe : SwapperRoute
     @Serializable data object Badge: SwapperRoute
     @Serializable data object Profile : SwapperRoute
+    @Serializable data object AddEvent : SwapperRoute
     @Serializable data class RecipeDetails(val recipeId: Int): SwapperRoute
 }
 
@@ -58,6 +60,9 @@ fun SwapperNavGraph(navController: NavHostController) {
         }
         composable<SwapperRoute.Profile> {
             ProfileScreen(navController)
+        }
+        composable<SwapperRoute.AddEvent> {
+            AddEventScreen(navController)
         }
         composable<SwapperRoute.RecipeDetails> { backStackEntry ->
             val route = backStackEntry.toRoute<SwapperRoute.RecipeDetails>()

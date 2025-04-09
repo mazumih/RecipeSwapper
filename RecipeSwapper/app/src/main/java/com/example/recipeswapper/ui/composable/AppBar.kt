@@ -3,6 +3,8 @@ package com.example.recipeswapper.ui.composable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
@@ -45,6 +47,12 @@ fun AppBar(navController: NavHostController, title: String) {
                 }
                 IconButton(onClick = { } ) {
                     Icon(Icons.Filled.Star, "Preferiti")
+                }
+            }
+            if (title == "Recipe Details") {
+                IconButton(onClick = { } ) {
+                    // diventa piena quando si aggiunge ai preferiti e viceversa
+                    Icon(Icons.Filled.FavoriteBorder, "Aggiungi ai preferiti")
                 }
             }
         },

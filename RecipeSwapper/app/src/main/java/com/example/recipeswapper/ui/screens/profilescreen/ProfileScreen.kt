@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.recipeswapper.ui.SwapperRoute
 import com.example.recipeswapper.ui.composable.AppBar
 import com.example.recipeswapper.ui.composable.Picture
 
@@ -27,7 +28,7 @@ fun ProfileScreen(
     Scaffold(
         topBar = { AppBar(navController, title = "Profile") },
         floatingActionButton = {
-            FloatingActionButton(onClick = { /* TODO */ }) {
+            FloatingActionButton(onClick = { navController.navigate(SwapperRoute.AddEvent) }) {
                 Icon(Icons.Outlined.Groups, "Crea festa")
             }
         },
