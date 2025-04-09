@@ -24,7 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.recipeswapper.ui.composable.AppBar
-import com.example.recipeswapper.ui.composable.FoodPicture
+import com.example.recipeswapper.ui.composable.Picture
 
 @Composable
 fun AddRecipeScreen(
@@ -83,7 +83,7 @@ fun AddRecipeScreen(
                 Text("Take a picture")
             }
             Spacer(Modifier.size(8.dp))
-            FoodPicture()
+            Picture("Food picture")
         }
     }
 }

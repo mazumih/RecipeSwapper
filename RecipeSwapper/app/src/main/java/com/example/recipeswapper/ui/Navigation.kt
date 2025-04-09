@@ -2,6 +2,7 @@ package com.example.recipeswapper.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.internal.composableLambda
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -13,6 +14,7 @@ import com.example.recipeswapper.ui.screens.addrecipe.AddRecipeViewModel
 import com.example.recipeswapper.ui.screens.badges.BadgeScreen
 import com.example.recipeswapper.ui.screens.badges.BadgeViewModel
 import com.example.recipeswapper.ui.screens.home.HomeScreen
+import com.example.recipeswapper.ui.screens.profilescreen.ProfileScreen
 import com.example.recipeswapper.ui.screens.recipedetails.RecipeDetailsScreen
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
@@ -21,6 +23,7 @@ sealed interface SwapperRoute {
     @Serializable data object Home : SwapperRoute
     @Serializable data object AddRecipe : SwapperRoute
     @Serializable data object Badge: SwapperRoute
+    @Serializable data object Profile : SwapperRoute
     @Serializable data class RecipeDetails(val recipeId: Int): SwapperRoute
 }
 
@@ -52,6 +55,9 @@ fun SwapperNavGraph(navController: NavHostController) {
             // questo dovrebbe andare da qualche altra parte
             if (recipesState.recipes.size > 3) badgeVm.unlockBadge("Bree")
             BadgeScreen(badges, navController)
+        }
+        composable<SwapperRoute.Profile> {
+            ProfileScreen(navController)
         }
         composable<SwapperRoute.RecipeDetails> { backStackEntry ->
             val route = backStackEntry.toRoute<SwapperRoute.RecipeDetails>()

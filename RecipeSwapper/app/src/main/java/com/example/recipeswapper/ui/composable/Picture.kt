@@ -16,10 +16,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun FoodPicture() {
+fun Picture(description: String) {
     Image(
         Icons.Outlined.Image,
-        "Food picture",
+        description,
         contentScale = ContentScale.Fit,
         colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryContainer),
         modifier = Modifier
