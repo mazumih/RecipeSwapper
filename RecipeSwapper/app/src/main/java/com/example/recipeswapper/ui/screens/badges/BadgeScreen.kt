@@ -3,12 +3,17 @@ package com.example.recipeswapper.ui.screens.badges
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -21,32 +26,34 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.recipeswapper.BadgeState
+import com.example.recipeswapper.data.database.Badge
 import com.example.recipeswapper.ui.composable.AppBar
 
 @Composable
 fun BadgeScreen(
-    badges: List<Badge>,
+    state: BadgeState,
     navController: NavHostController
 ) {
     Scaffold(
         topBar = { AppBar(navController, title = "Badges") }
     ) { contentPadding ->
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 16.dp)
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            contentPadding = contentPadding
         ) {
-            items(badges) { item ->
-                BadgeCard(item, Modifier.padding(contentPadding))
+            items(state.badges) { item ->
+                BadgeCard(item)
             }
         }
     }
 }
 
 @Composable
-fun BadgeCard(badge: Badge, modifier: Modifier) {
+fun BadgeCard(badge: Badge, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
-            .size(200.dp)
-            .padding(8.dp),
+            .size(200.dp),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -55,7 +62,7 @@ fun BadgeCard(badge: Badge, modifier: Modifier) {
             modifier = Modifier.fillMaxSize()
         ) {
             val grayscale = ColorMatrix().apply { setToSaturation(0f) }
-            val painter = painterResource(id = badge.imageResId)
+            val painter = painterResource(id = badge.id)
             Image(
                 painter = painter,
                 contentDescription = badge.name,

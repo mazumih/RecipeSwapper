@@ -57,8 +57,6 @@ fun HomeScreen(
             FloatingActionButton(
                 onClick = { navController.navigate(SwapperRoute.AddRecipe) },
                 containerColor = MaterialTheme.colorScheme.primary ,
-                modifier = Modifier
-                    .offset(y = (+44).dp)
             ) {
                 Icon(Icons.Default.Add, "Add")
             }
@@ -155,7 +153,6 @@ fun NoItemsPlaceholder(modifier: Modifier = Modifier) {
 @Composable
 fun BottomBar(navController: NavHostController, title: String) {
     BottomAppBar(
-        tonalElevation = 6.dp,
         containerColor = MaterialTheme.colorScheme.surface
     ) {
         IconButton(onClick = {
@@ -165,9 +162,9 @@ fun BottomBar(navController: NavHostController, title: String) {
         }) {
             Icon(Icons.Filled.Home, contentDescription = "Home")
         }
-        Spacer(Modifier.weight(1f))
+        Spacer(Modifier.weight(0.5f))
         Spacer(Modifier.width(56.dp))
-        Spacer(Modifier.weight(1f))
+        Spacer(Modifier.weight(0.5f))
         IconButton(onClick = { navController.navigate(SwapperRoute.Profile) }) {
             Icon(Icons.Filled.Person, contentDescription = "Profile")
         }

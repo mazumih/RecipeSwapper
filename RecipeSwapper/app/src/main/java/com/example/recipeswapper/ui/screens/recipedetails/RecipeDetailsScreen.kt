@@ -36,6 +36,7 @@ fun RecipeDetailsScreen(
                 containerColor = MaterialTheme.colorScheme.tertiary,
                 onClick = {
                     onSubmit()
+                    navController.navigateUp()
                 }
             ) {
                 Icon(Icons.Filled.Delete, "Delete recipe")

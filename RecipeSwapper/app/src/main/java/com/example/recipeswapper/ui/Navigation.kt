@@ -1,8 +1,10 @@
 package com.example.recipeswapper.ui
 
+import android.widget.Toast
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.internal.composableLambda
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -13,7 +15,7 @@ import com.example.recipeswapper.ui.screens.addevent.AddEventScreen
 import com.example.recipeswapper.ui.screens.addrecipe.AddRecipeScreen
 import com.example.recipeswapper.ui.screens.addrecipe.AddRecipeViewModel
 import com.example.recipeswapper.ui.screens.badges.BadgeScreen
-import com.example.recipeswapper.ui.screens.badges.BadgeViewModel
+import com.example.recipeswapper.BadgeViewModel
 import com.example.recipeswapper.ui.screens.home.HomeScreen
 import com.example.recipeswapper.ui.screens.profilescreen.ProfileScreen
 import com.example.recipeswapper.ui.screens.recipedetails.RecipeDetailsScreen
@@ -33,6 +35,16 @@ sealed interface SwapperRoute {
 fun SwapperNavGraph(navController: NavHostController) {
     val recipesVm = koinViewModel<RecipeViewModel>()
     val recipesState by recipesVm.state.collectAsStateWithLifecycle()
+    val badgeVm = koinViewModel<BadgeViewModel>()
+    val badges by badgeVm.state.collectAsStateWithLifecycle()
+
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        badgeVm.toastEvent.collect { message ->
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     NavHost(
         navController = navController,
@@ -52,10 +64,6 @@ fun SwapperNavGraph(navController: NavHostController) {
             )
         }
         composable<SwapperRoute.Badge> {
-            val badgeVm = koinViewModel<BadgeViewModel>()
-            val badges by badgeVm.state.collectAsStateWithLifecycle()
-            // questo dovrebbe andare da qualche altra parte
-            if (recipesState.recipes.size > 3) badgeVm.unlockBadge("Bree")
             BadgeScreen(badges, navController)
         }
         composable<SwapperRoute.Profile> {

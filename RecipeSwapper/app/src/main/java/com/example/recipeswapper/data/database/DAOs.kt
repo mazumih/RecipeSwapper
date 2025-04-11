@@ -2,6 +2,7 @@ package com.example.recipeswapper.data.database
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
@@ -16,4 +17,23 @@ interface RecipesDAO {
 
     @Delete
     suspend fun delete(trip: Recipe)
+}
+
+@Dao
+interface BadgeDao {
+    @Query("SELECT * FROM badge")
+    fun getAllBadges(): Flow<List<Badge>>
+
+    @Insert
+    suspend fun insertAll(badges: List<Badge>)
+
+    @Query("UPDATE badge SET isUnlocked = 1 WHERE name = :badgeName AND isUnlocked = 0")
+    suspend fun unlockBadge(badgeName: String)
+
+    @Query("SELECT COUNT(*) FROM badge")
+    suspend fun getBadgeCount(): Int
+
+    /* debugging purpose */
+    @Query("UPDATE badge SET isUnlocked = 0")
+    suspend fun lockAll()
 }

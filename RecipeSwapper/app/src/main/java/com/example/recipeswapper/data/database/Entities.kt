@@ -10,3 +10,11 @@ data class Recipe(
     @ColumnInfo val name: String,
     @ColumnInfo val description: String
 )
+
+@Entity
+data class Badge(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val name: String,
+    val isUnlocked: Boolean,
+    val description: String
+)
