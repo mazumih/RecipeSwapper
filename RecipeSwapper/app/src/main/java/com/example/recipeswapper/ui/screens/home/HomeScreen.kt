@@ -45,6 +45,7 @@ import com.example.recipeswapper.RecipesState
 import com.example.recipeswapper.data.database.Recipe
 import com.example.recipeswapper.ui.SwapperRoute
 import com.example.recipeswapper.ui.composable.AppBar
+import com.example.recipeswapper.ui.composable.BottomBar
 
 @Composable
 fun HomeScreen(
@@ -147,26 +148,5 @@ fun NoItemsPlaceholder(modifier: Modifier = Modifier) {
             "Tap the + button to add a new recipe.",
             style = MaterialTheme.typography.bodyLarge
         )
-    }
-}
-
-@Composable
-fun BottomBar(navController: NavHostController, title: String) {
-    BottomAppBar(
-        containerColor = MaterialTheme.colorScheme.surface
-    ) {
-        IconButton(onClick = {
-            if(title != "RecipeSwapper") {
-                navController.navigate(SwapperRoute.Home)
-            }
-        }) {
-            Icon(Icons.Filled.Home, contentDescription = "Home")
-        }
-        Spacer(Modifier.weight(0.5f))
-        Spacer(Modifier.width(56.dp))
-        Spacer(Modifier.weight(0.5f))
-        IconButton(onClick = { navController.navigate(SwapperRoute.Profile) }) {
-            Icon(Icons.Filled.Person, contentDescription = "Profile")
-        }
     }
 }

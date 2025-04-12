@@ -16,6 +16,7 @@ import com.example.recipeswapper.ui.screens.addrecipe.AddRecipeScreen
 import com.example.recipeswapper.ui.screens.addrecipe.AddRecipeViewModel
 import com.example.recipeswapper.ui.screens.badges.BadgeScreen
 import com.example.recipeswapper.BadgeViewModel
+import com.example.recipeswapper.ui.screens.favourites.FavouritesScreen
 import com.example.recipeswapper.ui.screens.home.HomeScreen
 import com.example.recipeswapper.ui.screens.profilescreen.ProfileScreen
 import com.example.recipeswapper.ui.screens.recipedetails.RecipeDetailsScreen
@@ -28,6 +29,7 @@ sealed interface SwapperRoute {
     @Serializable data object Badge: SwapperRoute
     @Serializable data object Profile : SwapperRoute
     @Serializable data object AddEvent : SwapperRoute
+    @Serializable data object Favs : SwapperRoute
     @Serializable data class RecipeDetails(val recipeId: Int): SwapperRoute
 }
 
@@ -37,6 +39,8 @@ fun SwapperNavGraph(navController: NavHostController) {
     val recipesState by recipesVm.state.collectAsStateWithLifecycle()
     val badgeVm = koinViewModel<BadgeViewModel>()
     val badges by badgeVm.state.collectAsStateWithLifecycle()
+    val favsVm = koinViewModel<AddFavouritesViewModel>()
+    val favs by favsVm.state.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
 
@@ -72,11 +76,17 @@ fun SwapperNavGraph(navController: NavHostController) {
         composable<SwapperRoute.AddEvent> {
             AddEventScreen(navController)
         }
+        composable<SwapperRoute.Favs> {
+            FavouritesScreen(navController, favs)
+        }
         composable<SwapperRoute.RecipeDetails> { backStackEntry ->
             val route = backStackEntry.toRoute<SwapperRoute.RecipeDetails>()
             recipesState.recipes.find { it.id == route.recipeId }?. let { recipe ->
                 RecipeDetailsScreen(
                     onSubmit = { recipesVm.deleteRecipe(recipe) },
+                    favSaved = { favsVm.addFavouriteRecipe(recipe) },
+                    favDeleted = { favsVm.deleteFavouriteRecipe(recipe) },
+                    favs,
                     recipe,
                     navController
                 )

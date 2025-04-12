@@ -45,7 +45,7 @@ fun AppBar(navController: NavHostController, title: String) {
                 IconButton(onClick = { navController.navigate(SwapperRoute.Badge)}) {
                     Icon(Icons.Filled.Settings, "Impostazioni")
                 }
-                IconButton(onClick = { } ) {
+                IconButton(onClick = { navController.navigate(SwapperRoute.Favs) } ) {
                     Icon(Icons.Filled.Star, "Preferiti")
                 }
             }

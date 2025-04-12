@@ -16,7 +16,19 @@ interface RecipesDAO {
     suspend fun upsert(recipe: Recipe)
 
     @Delete
-    suspend fun delete(trip: Recipe)
+    suspend fun delete(recipe: Recipe)
+}
+
+@Dao
+interface FavouriteRecipesDAO {
+    @Query("SELECT * FROM recipe")
+    fun getAll(): Flow<List<Recipe>>
+
+    @Upsert
+    suspend fun upsert(favRecipe: Recipe)
+
+    @Delete
+    suspend fun delete(favRecipe: Recipe)
 }
 
 @Dao
