@@ -23,7 +23,6 @@ import com.example.recipeswapper.ui.screens.profilescreen.ProfileScreen
 import com.example.recipeswapper.ui.screens.recipedetails.RecipeDetailsScreen
 import com.example.recipeswapper.ui.screens.settings.SettingsScreen
 import com.example.recipeswapper.ui.screens.settings.ThemeState
-import kotlinx.coroutines.Job
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
@@ -46,6 +45,7 @@ fun SwapperNavGraph(
 ) {
     val recipesVm = koinViewModel<RecipeViewModel>()
     val recipesState by recipesVm.state.collectAsStateWithLifecycle()
+    val queryState by recipesVm.searchQuery.collectAsStateWithLifecycle()
     val badgeVm = koinViewModel<BadgeViewModel>()
     val badges by badgeVm.state.collectAsStateWithLifecycle()
     val favsVm = koinViewModel<AddFavouritesViewModel>()
@@ -64,7 +64,11 @@ fun SwapperNavGraph(
         startDestination = SwapperRoute.Home,
     ) {
         composable<SwapperRoute.Home> {
-            HomeScreen(recipesState, navController)
+            HomeScreen(
+                recipesState,
+                queryState,
+                onSubmit = { recipesVm.updateQuery(it) },
+                navController)
         }
         composable<SwapperRoute.AddRecipe> {
             val addRecipeVm = koinViewModel<AddRecipeViewModel>()

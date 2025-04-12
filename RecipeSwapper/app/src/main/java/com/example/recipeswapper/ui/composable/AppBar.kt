@@ -2,9 +2,6 @@ package com.example.recipeswapper.ui.composable
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
@@ -36,11 +33,6 @@ fun AppBar(navController: NavHostController, title: String) {
             }
         },
         actions = {
-            if (title == "RecipeSwapper") {
-                IconButton(onClick = { navController.navigate(SwapperRoute.Profile) } ) {
-                    Icon(Icons.Filled.AccountCircle, "Immagine profilo")
-                }
-            }
             if (title == "Profile") {
                 IconButton(onClick = { navController.navigate(SwapperRoute.Badge)}) {
                     Icon(Icons.Filled.Settings, "Impostazioni")

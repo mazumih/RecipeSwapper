@@ -24,6 +24,8 @@ fun BottomBar(navController: NavHostController, title: String) {
         IconButton(onClick = {
             if(title != "RecipeSwapper") {
                 navController.navigate(SwapperRoute.Home)
+            } else {
+                navController.navigate(SwapperRoute.Settings)
             }
         }) {
             Icon(Icons.Filled.Home, contentDescription = "Home")

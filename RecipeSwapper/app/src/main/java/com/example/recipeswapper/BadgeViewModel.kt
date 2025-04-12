@@ -6,9 +6,9 @@ import com.example.recipeswapper.data.database.Badge
 import com.example.recipeswapper.data.database.Recipe
 import com.example.recipeswapper.data.repositories.BadgesRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -26,7 +26,7 @@ class BadgeViewModel(
     )
 
     private val _toastEvent = MutableSharedFlow<String>()
-    val toastEvent: SharedFlow<String> = _toastEvent
+    val toastEvent = _toastEvent.asSharedFlow()
 
     init {
         viewModelScope.launch {
