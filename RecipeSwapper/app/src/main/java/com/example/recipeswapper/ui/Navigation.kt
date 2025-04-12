@@ -16,10 +16,14 @@ import com.example.recipeswapper.ui.screens.addrecipe.AddRecipeScreen
 import com.example.recipeswapper.ui.screens.addrecipe.AddRecipeViewModel
 import com.example.recipeswapper.ui.screens.badges.BadgeScreen
 import com.example.recipeswapper.BadgeViewModel
+import com.example.recipeswapper.data.repositories.Theme
 import com.example.recipeswapper.ui.screens.favourites.FavouritesScreen
 import com.example.recipeswapper.ui.screens.home.HomeScreen
 import com.example.recipeswapper.ui.screens.profilescreen.ProfileScreen
 import com.example.recipeswapper.ui.screens.recipedetails.RecipeDetailsScreen
+import com.example.recipeswapper.ui.screens.settings.SettingsScreen
+import com.example.recipeswapper.ui.screens.settings.ThemeState
+import kotlinx.coroutines.Job
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
@@ -30,11 +34,16 @@ sealed interface SwapperRoute {
     @Serializable data object Profile : SwapperRoute
     @Serializable data object AddEvent : SwapperRoute
     @Serializable data object Favs : SwapperRoute
+    @Serializable data object Settings : SwapperRoute
     @Serializable data class RecipeDetails(val recipeId: Int): SwapperRoute
 }
 
 @Composable
-fun SwapperNavGraph(navController: NavHostController) {
+fun SwapperNavGraph(
+    navController: NavHostController,
+    themeState: ThemeState,
+    themeChange: (Theme) -> Unit
+) {
     val recipesVm = koinViewModel<RecipeViewModel>()
     val recipesState by recipesVm.state.collectAsStateWithLifecycle()
     val badgeVm = koinViewModel<BadgeViewModel>()
@@ -78,6 +87,9 @@ fun SwapperNavGraph(navController: NavHostController) {
         }
         composable<SwapperRoute.Favs> {
             FavouritesScreen(navController, favs)
+        }
+        composable<SwapperRoute.Settings> {
+            SettingsScreen(navController, themeState, themeChange)
         }
         composable<SwapperRoute.RecipeDetails> { backStackEntry ->
             val route = backStackEntry.toRoute<SwapperRoute.RecipeDetails>()

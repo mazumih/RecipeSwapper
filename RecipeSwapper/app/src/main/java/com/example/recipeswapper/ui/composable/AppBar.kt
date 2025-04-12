@@ -30,7 +30,7 @@ fun AppBar(navController: NavHostController, title: String) {
                     Icon(Icons.AutoMirrored.Outlined.ArrowBack, "Torna alla pagina precedente")
                 }
             } else {
-                IconButton(onClick = {/* TODO */ }) {
+                IconButton(onClick = { navController.navigate(SwapperRoute.Settings)  }) {
                     Icon(Icons.Filled.Search, "Cerca")
                 }
             }
@@ -47,12 +47,6 @@ fun AppBar(navController: NavHostController, title: String) {
                 }
                 IconButton(onClick = { navController.navigate(SwapperRoute.Favs) } ) {
                     Icon(Icons.Filled.Star, "Preferiti")
-                }
-            }
-            if (title == "Recipe Details") {
-                IconButton(onClick = { } ) {
-                    // diventa piena quando si aggiunge ai preferiti e viceversa
-                    Icon(Icons.Filled.FavoriteBorder, "Aggiungi ai preferiti")
                 }
             }
         },

@@ -1,5 +1,7 @@
 package com.example.recipeswapper
 
+import android.content.Context
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room.databaseBuilder
 import com.example.recipeswapper.data.database.BadgesDatabase
 import com.example.recipeswapper.data.database.FavouriteRecipesDatabase
@@ -7,12 +9,22 @@ import com.example.recipeswapper.data.database.RecipeSwapperDatabase
 import com.example.recipeswapper.data.repositories.BadgesRepository
 import com.example.recipeswapper.data.repositories.FavouriteRecipesRepository
 import com.example.recipeswapper.data.repositories.RecipesRepository
+import com.example.recipeswapper.data.repositories.SettingsRepository
 import com.example.recipeswapper.ui.AddFavouritesViewModel
 import com.example.recipeswapper.ui.screens.addrecipe.AddRecipeViewModel
+import com.example.recipeswapper.ui.screens.settings.SettingsViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
+val Context.dataStore by preferencesDataStore("theme")
+
 val appModule = module {
+
+    single { get<Context>().dataStore }
+
+    single { SettingsRepository(get()) }
+
+    viewModel { SettingsViewModel(get()) }
 
     single { AddRecipeViewModel() }
 
