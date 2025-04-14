@@ -24,11 +24,11 @@ fun AppBar(navController: NavHostController, title: String) {
         navigationIcon = {
             if (navController.previousBackStackEntry != null) {
                 IconButton(onClick = { navController.navigateUp() }) {
-                    Icon(Icons.AutoMirrored.Outlined.ArrowBack, "Torna alla pagina precedente")
+                    Icon(Icons.AutoMirrored.Outlined.ArrowBack, "Back previous page")
                 }
             } else {
                 IconButton(onClick = { navController.navigate(SwapperRoute.Settings)  }) {
-                    Icon(Icons.Filled.Search, "Cerca")
+                    Icon(Icons.Filled.Search, "Search")
                 }
             }
         },
@@ -37,7 +37,7 @@ fun AppBar(navController: NavHostController, title: String) {
                 IconButton(onClick = { navController.navigate(SwapperRoute.Badge)}) {
                     Icon(Icons.Filled.Settings, "Impostazioni")
                 }
-                IconButton(onClick = { navController.navigate(SwapperRoute.Favs) } ) {
+                IconButton(onClick = { navController.navigate(SwapperRoute.Fav) } ) {
                     Icon(Icons.Filled.Star, "Preferiti")
                 }
             }

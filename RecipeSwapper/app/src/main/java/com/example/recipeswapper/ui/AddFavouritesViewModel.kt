@@ -27,4 +27,8 @@ class AddFavouritesViewModel(
     fun removeFavouriteRecipe(favRecipe: Recipe) = viewModelScope.launch {
         repository.remove(favRecipe)
     }
+
+    fun removeAll() = viewModelScope.launch {
+        repository.removeAll()
+    }
 }

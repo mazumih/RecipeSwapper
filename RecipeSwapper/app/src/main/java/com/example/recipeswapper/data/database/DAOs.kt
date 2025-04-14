@@ -29,6 +29,10 @@ interface FavouriteRecipesDAO {
 
     @Delete
     suspend fun remove(favRecipe: Recipe)
+
+    /* debugging purpose */
+    @Query("DELETE FROM recipe")
+    suspend fun removeAll()
 }
 
 @Dao

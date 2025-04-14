@@ -6,6 +6,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,12 +23,18 @@ import com.example.recipeswapper.ui.screens.home.GridItem
 @Composable
 fun FavouritesScreen(
     navController: NavHostController,
-    favs: FavouriteRecipesState
+    onSubmit: () -> Unit,
+    favState: FavouriteRecipesState
 ) {
     Scaffold(
-        topBar = { AppBar(navController, "Favourites") }
+        topBar = { AppBar(navController, "Favourites") },
+        floatingActionButton = {
+            FloatingActionButton(onClick = onSubmit) {
+                Icon(Icons.Filled.Delete, "Delete all")
+            }
+        }
     ) { contentPadding ->
-        if(favs.favRecipes.isNotEmpty()) {
+        if(favState.favRecipes.isNotEmpty()) {
             /* POSSIBILE DIVERSIFICARE UN PO' RISPETTO ALLA HOME */
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
@@ -33,7 +43,7 @@ fun FavouritesScreen(
                 contentPadding = PaddingValues(8.dp, 8.dp, 8.dp, 80.dp),
                 modifier = Modifier.padding(contentPadding)
             ) {
-                items(favs.favRecipes) { item ->
+                items(favState.favRecipes) { item ->
                     GridItem(
                         onClick = { navController.navigate(SwapperRoute.RecipeDetails(item.id)) },
                         item

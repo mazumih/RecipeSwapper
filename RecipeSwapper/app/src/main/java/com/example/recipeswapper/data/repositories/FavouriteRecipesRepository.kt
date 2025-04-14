@@ -12,4 +12,6 @@ class FavouriteRecipesRepository(
     suspend fun upsert(favRecipe: Recipe) = dao.upsert(favRecipe)
 
     suspend fun remove(favRecipe: Recipe) = dao.remove(favRecipe)
+
+    suspend fun removeAll() = dao.removeAll()
 }

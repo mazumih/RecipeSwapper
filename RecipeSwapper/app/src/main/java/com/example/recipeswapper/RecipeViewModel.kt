@@ -3,6 +3,7 @@ package com.example.recipeswapper
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.recipeswapper.data.database.Recipe
+import com.example.recipeswapper.data.repositories.FavouriteRecipesRepository
 import com.example.recipeswapper.data.repositories.RecipesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,7 +18,8 @@ data class RecipesState(val recipes: List<Recipe>)
 data class QueryState(val query: String)
 
 class RecipeViewModel(
-    private val repository: RecipesRepository
+    private val repository: RecipesRepository,
+    private val favRepository: FavouriteRecipesRepository
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow(QueryState(""))
@@ -43,5 +45,6 @@ class RecipeViewModel(
 
     fun deleteRecipe(recipe: Recipe) = viewModelScope.launch {
         repository.delete(recipe)
+        favRepository.remove(recipe)
     }
 }

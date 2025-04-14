@@ -32,7 +32,7 @@ sealed interface SwapperRoute {
     @Serializable data object Badge: SwapperRoute
     @Serializable data object Profile : SwapperRoute
     @Serializable data object AddEvent : SwapperRoute
-    @Serializable data object Favs : SwapperRoute
+    @Serializable data object Fav : SwapperRoute
     @Serializable data object Settings : SwapperRoute
     @Serializable data class RecipeDetails(val recipeId: Int): SwapperRoute
 }
@@ -89,8 +89,11 @@ fun SwapperNavGraph(
         composable<SwapperRoute.AddEvent> {
             AddEventScreen(navController)
         }
-        composable<SwapperRoute.Favs> {
-            FavouritesScreen(navController, favState)
+        composable<SwapperRoute.Fav> {
+            FavouritesScreen(
+                navController,
+                onSubmit = { favVm.removeAll() },
+                favState)
         }
         composable<SwapperRoute.Settings> {
             SettingsScreen(navController, themeState, themeChange)

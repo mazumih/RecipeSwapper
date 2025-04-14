@@ -141,7 +141,7 @@ fun HomeScreen(
                         IconButton(onClick = {
                             isSearching = false
                         }) {
-                            Icon(Icons.Filled.Close, contentDescription = "Chiudi")
+                            Icon(Icons.Filled.Close, contentDescription = "Close")
                         }
                     }
                 )

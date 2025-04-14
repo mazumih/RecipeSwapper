@@ -28,7 +28,7 @@ val appModule = module {
 
     single { AddRecipeViewModel() }
 
-    viewModel { RecipeViewModel(get()) }
+    viewModel { RecipeViewModel(get(), get()) }
 
     single {
         databaseBuilder(
