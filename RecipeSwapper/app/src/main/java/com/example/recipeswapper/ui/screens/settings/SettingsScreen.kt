@@ -33,7 +33,10 @@ fun SettingsScreen(
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
         Column(
-            Modifier.padding(innerPadding).selectableGroup(),
+            Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .selectableGroup(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -48,7 +51,8 @@ fun SettingsScreen(
                             role = Role.RadioButton
                         )
                         .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
                 ) {
                     RadioButton(
                         selected = (theme == state.theme),
