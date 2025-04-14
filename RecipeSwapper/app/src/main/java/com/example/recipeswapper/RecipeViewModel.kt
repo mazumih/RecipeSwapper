@@ -10,26 +10,22 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class RecipesState(val recipes: List<Recipe>)
+data class QueryState(val query: String)
 
 class RecipeViewModel(
     private val repository: RecipesRepository
 ) : ViewModel() {
-    /**
-    val state = repository.recipes.map { RecipesState(recipes = it) }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = RecipesState(emptyList())
-    )*/
 
-    private val _searchQuery = MutableStateFlow("")
+    private val _searchQuery = MutableStateFlow(QueryState(""))
     val searchQuery = _searchQuery.asStateFlow()
 
     val state = combine(repository.recipes, _searchQuery) { recipes, query ->
-        if (query.isBlank()) recipes else recipes.filter {
-            it.name.contains(query, ignoreCase = true)
+        if (query.query.isBlank()) recipes else recipes.filter {
+            it.name.contains(query.query, ignoreCase = true)
         }
     }.map { RecipesState(recipes = it) }.stateIn(
         scope = viewModelScope,
@@ -38,7 +34,7 @@ class RecipeViewModel(
     )
 
     fun updateQuery(query: String) {
-        _searchQuery.value = query
+        _searchQuery.update { it.copy(query = query) }
     }
 
     fun addRecipe(recipe: Recipe) = viewModelScope.launch {

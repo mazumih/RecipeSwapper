@@ -51,6 +51,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
+import com.example.recipeswapper.QueryState
 import com.example.recipeswapper.RecipesState
 import com.example.recipeswapper.data.database.Recipe
 import com.example.recipeswapper.ui.SwapperRoute
@@ -60,7 +61,7 @@ import com.example.recipeswapper.ui.composable.BottomBar
 @Composable
 fun HomeScreen(
     state: RecipesState,
-    queryState: String,
+    queryState: QueryState,
     onSubmit: (String) -> Unit,
     navController: NavHostController
 ) {
@@ -129,7 +130,7 @@ fun HomeScreen(
                 tonalElevation = 8.dp
             ) {
                 TextField(
-                    value = queryState,
+                    value = queryState.query,
                     onValueChange = { onSubmit(it) },
                     placeholder = { Text("Cerca ricetta...") },
                     singleLine = true,

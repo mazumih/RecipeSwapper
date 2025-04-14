@@ -24,7 +24,7 @@ class AddFavouritesViewModel(
         repository.upsert(favRecipe)
     }
 
-    fun deleteFavouriteRecipe(favRecipe: Recipe) = viewModelScope.launch {
-        repository.delete(favRecipe)
+    fun removeFavouriteRecipe(favRecipe: Recipe) = viewModelScope.launch {
+        repository.remove(favRecipe)
     }
 }

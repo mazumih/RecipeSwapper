@@ -48,8 +48,8 @@ fun SwapperNavGraph(
     val queryState by recipesVm.searchQuery.collectAsStateWithLifecycle()
     val badgeVm = koinViewModel<BadgeViewModel>()
     val badges by badgeVm.state.collectAsStateWithLifecycle()
-    val favsVm = koinViewModel<AddFavouritesViewModel>()
-    val favs by favsVm.state.collectAsStateWithLifecycle()
+    val favVm = koinViewModel<AddFavouritesViewModel>()
+    val favState by favVm.state.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
 
@@ -90,7 +90,7 @@ fun SwapperNavGraph(
             AddEventScreen(navController)
         }
         composable<SwapperRoute.Favs> {
-            FavouritesScreen(navController, favs)
+            FavouritesScreen(navController, favState)
         }
         composable<SwapperRoute.Settings> {
             SettingsScreen(navController, themeState, themeChange)
@@ -100,9 +100,9 @@ fun SwapperNavGraph(
             recipesState.recipes.find { it.id == route.recipeId }?. let { recipe ->
                 RecipeDetailsScreen(
                     onSubmit = { recipesVm.deleteRecipe(recipe) },
-                    favSaved = { favsVm.addFavouriteRecipe(recipe) },
-                    favDeleted = { favsVm.deleteFavouriteRecipe(recipe) },
-                    favs,
+                    favSaved = { favVm.addFavouriteRecipe(recipe) },
+                    favRemove = { favVm.removeFavouriteRecipe(recipe) },
+                    favState,
                     recipe,
                     navController
                 )

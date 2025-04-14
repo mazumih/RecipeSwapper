@@ -28,7 +28,7 @@ interface FavouriteRecipesDAO {
     suspend fun upsert(favRecipe: Recipe)
 
     @Delete
-    suspend fun delete(favRecipe: Recipe)
+    suspend fun remove(favRecipe: Recipe)
 }
 
 @Dao

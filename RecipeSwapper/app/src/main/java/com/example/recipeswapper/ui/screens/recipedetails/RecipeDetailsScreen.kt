@@ -36,8 +36,8 @@ import com.example.recipeswapper.ui.composable.Picture
 fun RecipeDetailsScreen(
     onSubmit: () -> Unit,
     favSaved: () -> Unit,
-    favDeleted: () -> Unit,
-    favs: FavouriteRecipesState,
+    favRemove: () -> Unit,
+    favState: FavouriteRecipesState,
     recipe: Recipe,
     navController: NavHostController
 ) {
@@ -47,17 +47,17 @@ fun RecipeDetailsScreen(
                 title = { Text(recipe.name) },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, "Torna alla pagina precedente")
+                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, "Back to previous page")
                     }
                 },
                 actions = {
-                    if (favs.favRecipes.contains(recipe)) {
-                        IconButton(onClick = favDeleted) {
-                            Icon(Icons.Filled.Favorite, "Aggiungi nei preferiti")
+                    if (favState.favRecipes.contains(recipe)) {
+                        IconButton(onClick = favRemove) {
+                            Icon(Icons.Filled.Favorite, "Add to favourites")
                         }
                     } else {
                         IconButton(onClick = favSaved) {
-                            Icon(Icons.Filled.FavoriteBorder, "Togli dai preferiti")
+                            Icon(Icons.Filled.FavoriteBorder, "Remove from favourites")
                         }
                     }
                 },
