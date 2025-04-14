@@ -49,6 +49,9 @@ interface BadgeDao {
     @Query("SELECT COUNT(*) FROM badge")
     suspend fun getBadgeCount(): Int
 
+    @Query("SELECT EXISTS(SELECT 1 FROM badge WHERE name = :badgeName AND isUnlocked = 1)")
+    suspend fun isUnlocked(badgeName: String) : Boolean
+
     /* debugging purpose */
     @Query("UPDATE badge SET isUnlocked = 0")
     suspend fun lockAll()

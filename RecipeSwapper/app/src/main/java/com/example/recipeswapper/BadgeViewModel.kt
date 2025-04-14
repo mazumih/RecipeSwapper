@@ -66,7 +66,9 @@ class BadgeViewModel(
     }
 
     private suspend fun unlockBadge(name: String) {
-        repository.unlockBadge(name)
-        _toastEvent.emit("Sbloccato $name")
+        if(!repository.isUnlocked(name)) {
+            repository.unlockBadge(name)
+            _toastEvent.emit("Unlocked $name's badge")
+        }
     }
 }

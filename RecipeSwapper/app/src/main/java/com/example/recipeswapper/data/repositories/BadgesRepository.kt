@@ -16,5 +16,7 @@ class BadgesRepository(
 
     suspend fun getBadgeCount() = badgesDao.getBadgeCount()
 
+    suspend fun isUnlocked(badgeName: String) : Boolean = badgesDao.isUnlocked(badgeName)
+
     suspend fun lockAll() = badgesDao.lockAll()
 }
