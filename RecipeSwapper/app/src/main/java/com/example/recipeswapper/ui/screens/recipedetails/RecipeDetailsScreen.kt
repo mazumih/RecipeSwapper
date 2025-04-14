@@ -1,5 +1,6 @@
 package com.example.recipeswapper.ui.screens.recipedetails
 
+import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -29,7 +30,8 @@ import androidx.navigation.NavHostController
 import com.example.recipeswapper.data.database.Recipe
 import com.example.recipeswapper.ui.FavouriteRecipesState
 import com.example.recipeswapper.ui.composable.BottomBar
-import com.example.recipeswapper.ui.composable.Picture
+import com.example.recipeswapper.ui.composable.ImageWithPlaceholder
+import com.example.recipeswapper.ui.composable.Size
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -85,7 +87,7 @@ fun RecipeDetailsScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(contentPadding).padding(12.dp).fillMaxSize()
         ) {
-            Picture("Food picture")
+            ImageWithPlaceholder(Uri.parse(recipe.imageUri), Size.Lg)
             Text(
                 recipe.name,
                 style = MaterialTheme.typography.titleLarge

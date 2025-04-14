@@ -21,10 +21,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.recipeswapper.ui.composable.AppBar
-import com.example.recipeswapper.ui.composable.Picture
+import com.example.recipeswapper.ui.composable.ImageWithPlaceholder
+import com.example.recipeswapper.ui.composable.Size
+import com.example.recipeswapper.utils.rememberCameraLauncher
+import com.example.recipeswapper.utils.saveImageToStorage
 
 @Composable
 fun AddRecipeScreen(
@@ -33,6 +39,11 @@ fun AddRecipeScreen(
     onSubmit: () -> Unit,
     navController: NavHostController
 ) {
+    val cameraLauncher = rememberCameraLauncher(
+        onPictureTaken = { imageUri -> actions.setUriImage(imageUri)
+        }
+    )
+
     Scaffold(
         topBar = { AppBar(navController, "Add recipe") },
         floatingActionButton = {
@@ -71,7 +82,7 @@ fun AddRecipeScreen(
             )
             Spacer(Modifier.size(24.dp))
             Button(
-                onClick = { /* TODO */ },
+                onClick = cameraLauncher::captureImage,
                 contentPadding = ButtonDefaults.ButtonWithIconContentPadding
             ) {
                 Icon(
@@ -83,7 +94,7 @@ fun AddRecipeScreen(
                 Text("Take a picture")
             }
             Spacer(Modifier.size(8.dp))
-            Picture("Food picture")
+            ImageWithPlaceholder(state.imageUri, Size.Lg)
         }
     }
 }

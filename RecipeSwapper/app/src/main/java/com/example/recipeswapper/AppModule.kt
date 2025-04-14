@@ -35,7 +35,9 @@ val appModule = module {
             get(),
             RecipeSwapperDatabase::class.java,
             "recipe-list"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     single {
@@ -51,7 +53,9 @@ val appModule = module {
             get(),
             FavouriteRecipesDatabase::class.java,
             "favourites-list"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     single { BadgesRepository(get<BadgesDatabase>().badgeDao()) }

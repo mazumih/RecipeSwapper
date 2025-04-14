@@ -1,5 +1,6 @@
 package com.example.recipeswapper.ui.screens.addrecipe
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import com.example.recipeswapper.data.database.Recipe
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -8,19 +9,22 @@ import kotlinx.coroutines.flow.update
 
 data class AddRecipeState(
     val name: String = "",
-    val description: String = ""
+    val description: String = "",
+    val imageUri: Uri = Uri.EMPTY
 ) {
     val canSubmit get() = name.isNotBlank() && description.isNotBlank()
 
     fun toRecipe() = Recipe(
         name = name,
         description =  description,
+        imageUri = imageUri.toString()
     )
 }
 
 interface AddRecipeActions {
     fun setName(name: String)
     fun setDescription(description: String)
+    fun setUriImage(imageUri: Uri)
     fun clearForm()
 }
 
@@ -37,8 +41,18 @@ class AddRecipeViewModel : ViewModel() {
             _state.update { it.copy(description = description) }
         }
 
+        override fun setUriImage(imageUri: Uri) {
+            _state.update { it.copy(imageUri = imageUri) }
+        }
+
         override fun clearForm() {
-            _state.update { it.copy(name = "", description = "") }
+            _state.update {
+                it.copy(
+                    name = "",
+                    description = "",
+                    imageUri = Uri.EMPTY
+                )
+            }
         }
     }
 }
