@@ -14,9 +14,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MyLocation
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -37,32 +37,41 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.recipeswapper.data.remote.OSMDataSource
 import com.example.recipeswapper.ui.composable.AppBar
 import com.example.recipeswapper.utils.LocationService
 import com.example.recipeswapper.utils.PermissionStatus
+import com.example.recipeswapper.utils.isOnline
+import com.example.recipeswapper.utils.openWirelessSettings
 import com.example.recipeswapper.utils.rememberMultiplePermissions
 import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 
 @Composable
 fun AddEventScreen(
     navController: NavHostController
 ) {
+    var showNoInternetConnectivitySnackbar by remember { mutableStateOf(false) }
     var showLocationDisabledAlert by remember { mutableStateOf(false) }
     var showPermissionDeniedAlert by remember { mutableStateOf(false) }
     var showPermissionPermanentlyDeniedSnackbar by remember { mutableStateOf(false) }
+
+    /* debugging purpose */
+    var location by remember { mutableStateOf("") }
 
     val ctx = LocalContext.current
     val locationService = remember { LocationService(ctx) }
 
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    /**
     fun getCurrentLocation() = scope.launch {
         try {
             locationService.getCurrentLocation()
         } catch (_: IllegalStateException) {
             showLocationDisabledAlert = true
         }
-    }
+    }*/
 
     val locationPermissions = rememberMultiplePermissions(
         listOf(
@@ -71,8 +80,7 @@ fun AddEventScreen(
         )
     ) { statuses ->
         when {
-            statuses.any { it.value == PermissionStatus.Granted } ->
-                getCurrentLocation()
+            statuses.any { it.value == PermissionStatus.Granted } -> {}
             statuses.all { it.value == PermissionStatus.PermanentlyDenied } ->
                 showPermissionPermanentlyDeniedSnackbar = true
             else ->
@@ -80,13 +88,27 @@ fun AddEventScreen(
         }
     }
 
-    fun getLocationOrRequestPermission() {
-        if (locationPermissions.statuses.any { it.value.isGranted }) {
-            getCurrentLocation()
-        } else {
+    val osmDataSource = koinInject<OSMDataSource>()
+
+    fun getCurrentLocationName() = scope.launch {
+        if (locationPermissions.statuses.none { it.value.isGranted }) {
             locationPermissions.launchPermissionRequest()
+            return@launch
         }
+        val coordinates = try {
+            locationService.getCurrentLocation() ?: return@launch
+        } catch (_: IllegalStateException) {
+            showLocationDisabledAlert = true
+            return@launch
+        }
+        if (!isOnline(ctx)) {
+            showNoInternetConnectivitySnackbar = true
+            return@launch
+        }
+        val place = osmDataSource.getPlace(coordinates)
+        location = place.displayName
     }
+
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -121,15 +143,26 @@ fun AddEventScreen(
                 modifier = Modifier.fillMaxWidth(),
             )
             OutlinedTextField(
-                value = "",
+                value = location,
                 onValueChange = { /* TODO */ },
                 label = { Text("Posto") },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
                     if (isLoading) {
-                        LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                        CircularProgressIndicator(
+                            strokeWidth = 3.dp,
+                            modifier = Modifier.size(24.dp),
+                        )
                     } else {
-                        IconButton(onClick = ::getLocationOrRequestPermission) {
+                        IconButton(
+                            onClick = {
+                                scope.launch {
+                                    isLoading = true
+                                    getCurrentLocationName().join()
+                                    isLoading = false
+                                }
+                            }
+                        ) {
                             Icon(Icons.Outlined.MyLocation, "Current location")
                         }
                     }
@@ -200,6 +233,19 @@ fun AddEventScreen(
                     }
                 }
                 showPermissionPermanentlyDeniedSnackbar = false
+            }
+        }
+        if (showNoInternetConnectivitySnackbar) {
+            LaunchedEffect(snackbarHostState) {
+                val res = snackbarHostState.showSnackbar(
+                    message = "No Internet connectivity",
+                    actionLabel = "Go to Settings",
+                    duration = SnackbarDuration.Long
+                )
+                if (res == SnackbarResult.ActionPerformed) {
+                    openWirelessSettings(ctx)
+                }
+                showNoInternetConnectivitySnackbar = false
             }
         }
     }

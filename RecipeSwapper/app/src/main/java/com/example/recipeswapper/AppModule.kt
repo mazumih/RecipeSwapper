@@ -6,6 +6,7 @@ import androidx.room.Room.databaseBuilder
 import com.example.recipeswapper.data.database.BadgesDatabase
 import com.example.recipeswapper.data.database.FavouriteRecipesDatabase
 import com.example.recipeswapper.data.database.RecipeSwapperDatabase
+import com.example.recipeswapper.data.remote.OSMDataSource
 import com.example.recipeswapper.data.repositories.BadgesRepository
 import com.example.recipeswapper.data.repositories.FavouriteRecipesRepository
 import com.example.recipeswapper.data.repositories.RecipesRepository
@@ -13,12 +14,27 @@ import com.example.recipeswapper.data.repositories.SettingsRepository
 import com.example.recipeswapper.ui.AddFavouritesViewModel
 import com.example.recipeswapper.ui.screens.addrecipe.AddRecipeViewModel
 import com.example.recipeswapper.ui.screens.settings.SettingsViewModel
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val Context.dataStore by preferencesDataStore("theme")
 
 val appModule = module {
+
+    single {
+        HttpClient {
+            install(ContentNegotiation) {
+                json(Json {
+                    ignoreUnknownKeys = true
+                })
+            }
+        }
+    }
+    single { OSMDataSource(get()) }
 
     single { get<Context>().dataStore }
 
