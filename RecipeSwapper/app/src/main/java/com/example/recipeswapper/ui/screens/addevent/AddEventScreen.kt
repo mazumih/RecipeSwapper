@@ -1,9 +1,12 @@
 package com.example.recipeswapper.ui.screens.addevent
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.provider.CalendarContract
 import android.provider.Settings
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -49,6 +52,8 @@ import com.example.recipeswapper.utils.openWirelessSettings
 import com.example.recipeswapper.utils.rememberMultiplePermissions
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun AddEventScreen(
@@ -98,8 +103,49 @@ fun AddEventScreen(
         actions.setLocation(place.displayName)
     }
 
-
     val snackbarHostState = remember { SnackbarHostState() }
+
+    /* CALENDAR */
+    fun openCalendarWithEvent() {
+        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+        try {
+            val date = formatter.parse(state.date)
+            val startMillis = date?.time ?: return
+
+            val intent = Intent(Intent.ACTION_INSERT).apply {
+                data = CalendarContract.Events.CONTENT_URI
+                putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true)
+                putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startMillis)
+                putExtra(CalendarContract.Events.TITLE, state.name)
+                putExtra(CalendarContract.Events.DESCRIPTION, state.description)
+                putExtra(CalendarContract.Events.EVENT_LOCATION, state.location)
+            }
+
+            ctx.startActivity(intent)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(ctx, "Errore nel formato della data", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    val calendarPermissions = rememberMultiplePermissions(
+        listOf(Manifest.permission.WRITE_CALENDAR, Manifest.permission.READ_CALENDAR)
+    ) { statuses ->
+        when {
+            statuses.any { it.value == PermissionStatus.Granted } ->
+                openCalendarWithEvent()
+            else -> { /* ALERT DIALOG */}
+        }
+    }
+
+    fun openCalendarOrGetRequestPermission() {
+        if (calendarPermissions.statuses.any { it.value.isGranted }) {
+            openCalendarWithEvent()
+        } else {
+            calendarPermissions.launchPermissionRequest()
+        }
+    }
 
     Scaffold(
         topBar = { AppBar(navController, "Crea Evento") },
@@ -109,7 +155,8 @@ fun AddEventScreen(
                 onClick = {
                     if(!state.canSubmit) return@FloatingActionButton
                     //onSubmit
-                    actions.clearForm()
+                    openCalendarOrGetRequestPermission()
+                    //actions.clearForm()
                     navController.navigateUp()
                 }
             ) {
