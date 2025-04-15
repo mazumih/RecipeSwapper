@@ -45,7 +45,9 @@ val appModule = module {
             get(),
             BadgesDatabase::class.java,
             "badge-list"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     single {
