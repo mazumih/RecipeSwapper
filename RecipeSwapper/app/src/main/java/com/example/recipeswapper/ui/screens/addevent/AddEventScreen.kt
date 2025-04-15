@@ -12,11 +12,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.MyLocation
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -49,29 +52,15 @@ import org.koin.compose.koinInject
 
 @Composable
 fun AddEventScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    state: AddEventState,
+    onSubmit: () -> Unit,
+    actions: AddEventActions
 ) {
-    var showNoInternetConnectivitySnackbar by remember { mutableStateOf(false) }
-    var showLocationDisabledAlert by remember { mutableStateOf(false) }
-    var showPermissionDeniedAlert by remember { mutableStateOf(false) }
-    var showPermissionPermanentlyDeniedSnackbar by remember { mutableStateOf(false) }
-
-    /* debugging purpose */
-    var location by remember { mutableStateOf("") }
-
     val ctx = LocalContext.current
     val locationService = remember { LocationService(ctx) }
 
     var isLoading by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
-    /**
-    fun getCurrentLocation() = scope.launch {
-        try {
-            locationService.getCurrentLocation()
-        } catch (_: IllegalStateException) {
-            showLocationDisabledAlert = true
-        }
-    }*/
 
     val locationPermissions = rememberMultiplePermissions(
         listOf(
@@ -82,14 +71,14 @@ fun AddEventScreen(
         when {
             statuses.any { it.value == PermissionStatus.Granted } -> {}
             statuses.all { it.value == PermissionStatus.PermanentlyDenied } ->
-                showPermissionPermanentlyDeniedSnackbar = true
+                actions.setShowLocationPermissionPermanentlyDeniedSnackbar(true)
             else ->
-                showPermissionDeniedAlert = true
+                actions.setShowLocationPermissionDeniedAlert(true)
         }
     }
 
     val osmDataSource = koinInject<OSMDataSource>()
-
+    val scope = rememberCoroutineScope()
     fun getCurrentLocationName() = scope.launch {
         if (locationPermissions.statuses.none { it.value.isGranted }) {
             locationPermissions.launchPermissionRequest()
@@ -98,15 +87,15 @@ fun AddEventScreen(
         val coordinates = try {
             locationService.getCurrentLocation() ?: return@launch
         } catch (_: IllegalStateException) {
-            showLocationDisabledAlert = true
+            actions.setShowLocationDisabledAlert(true)
             return@launch
         }
         if (!isOnline(ctx)) {
-            showNoInternetConnectivitySnackbar = true
+            actions.setShowNoInternetConnectivitySnackbar(true)
             return@launch
         }
         val place = osmDataSource.getPlace(coordinates)
-        location = place.displayName
+        actions.setLocation(place.displayName)
     }
 
 
@@ -114,6 +103,19 @@ fun AddEventScreen(
 
     Scaffold(
         topBar = { AppBar(navController, "Crea Evento") },
+        floatingActionButton = {
+            FloatingActionButton(
+                containerColor = MaterialTheme.colorScheme.tertiary,
+                onClick = {
+                    if(!state.canSubmit) return@FloatingActionButton
+                    //onSubmit
+                    actions.clearForm()
+                    navController.navigateUp()
+                }
+            ) {
+                Icon(Icons.Filled.Check, "Add Event")
+            }
+        },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { contentPadding ->
         Column(
@@ -125,26 +127,26 @@ fun AddEventScreen(
                 .fillMaxSize()
         ) {
             OutlinedTextField(
-                value = "",
-                onValueChange = { /* TODO */ },
+                value = state.name,
+                onValueChange = actions::setName,
                 label = { Text("Nome della serata") },
                 modifier = Modifier.fillMaxWidth(),
             )
             OutlinedTextField(
-                value = "",
-                onValueChange = { /* TODO */ },
+                value = state.date,
+                onValueChange = actions::setDate,
+                label = { Text("Date") },
+                modifier = Modifier.fillMaxWidth(),
+            )
+            OutlinedTextField(
+                value = state.description,
+                onValueChange = actions::setDescription,
                 label = { Text("Description") },
                 modifier = Modifier.fillMaxWidth(),
             )
             OutlinedTextField(
-                value = "",
-                onValueChange = { /* TODO */ },
-                label = { Text("Data") },
-                modifier = Modifier.fillMaxWidth(),
-            )
-            OutlinedTextField(
-                value = location,
-                onValueChange = { /* TODO */ },
+                value = state.location,
+                onValueChange = actions::setLocation,
                 label = { Text("Posto") },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
@@ -170,53 +172,53 @@ fun AddEventScreen(
             )
             Spacer(Modifier.size(4.dp))
         }
-        if (showLocationDisabledAlert) {
+        if (state.showLocationDisabledAlert) {
             AlertDialog(
                 title = { Text("Location disabled") },
                 text = { Text("Location must be enabled to get your coordinates in the app.") },
                 confirmButton = {
                     TextButton(onClick = {
                         locationService.openLocationSettings()
-                        showLocationDisabledAlert = false
+                        actions.setShowLocationDisabledAlert(false)
                     }) {
                         Text("Enable")
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = {
-                        showLocationDisabledAlert = false
+                        actions.setShowLocationDisabledAlert(false)
                     }) {
                         Text("Dismiss")
                     }
                 },
                 onDismissRequest = {
-                    showLocationDisabledAlert = false
+                    actions.setShowLocationDisabledAlert(false)
                 }
             )
         }
-        if (showPermissionDeniedAlert) {
+        if (state.showLocationPermissionDeniedAlert) {
             AlertDialog(
                 title = { Text("Location permission denied") },
                 text = { Text("Location permission is required to get your coordinates in the app.") },
                 confirmButton = {
                     TextButton(onClick = {
                         locationPermissions.launchPermissionRequest()
-                        showPermissionDeniedAlert = false
+                        actions.setShowLocationPermissionDeniedAlert(false)
                     }) {
                         Text("Grant")
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = {
-                        showPermissionDeniedAlert = false
+                        actions.setShowLocationPermissionDeniedAlert(false)
                     }) {
                         Text("Dismiss")
                     }
                 },
-                onDismissRequest = { showPermissionDeniedAlert = false }
+                onDismissRequest = { actions.setShowLocationPermissionDeniedAlert(false) }
             )
         }
-        if (showPermissionPermanentlyDeniedSnackbar) {
+        if (state.showLocationPermissionPermanentlyDeniedSnackbar) {
             LaunchedEffect(snackbarHostState) {
                 val res = snackbarHostState.showSnackbar(
                     "Location permission is required.",
@@ -232,10 +234,10 @@ fun AddEventScreen(
                         ctx.startActivity(intent)
                     }
                 }
-                showPermissionPermanentlyDeniedSnackbar = false
+                actions.setShowLocationPermissionDeniedAlert(false)
             }
         }
-        if (showNoInternetConnectivitySnackbar) {
+        if (state.showNoInternetConnectivitySnackbar) {
             LaunchedEffect(snackbarHostState) {
                 val res = snackbarHostState.showSnackbar(
                     message = "No Internet connectivity",
@@ -245,7 +247,7 @@ fun AddEventScreen(
                 if (res == SnackbarResult.ActionPerformed) {
                     openWirelessSettings(ctx)
                 }
-                showNoInternetConnectivitySnackbar = false
+                actions.setShowNoInternetConnectivitySnackbar(false)
             }
         }
     }

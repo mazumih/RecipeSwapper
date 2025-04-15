@@ -17,6 +17,7 @@ import com.example.recipeswapper.ui.screens.addrecipe.AddRecipeViewModel
 import com.example.recipeswapper.ui.screens.badges.BadgeScreen
 import com.example.recipeswapper.BadgeViewModel
 import com.example.recipeswapper.data.repositories.Theme
+import com.example.recipeswapper.ui.screens.addevent.AddEventViewModel
 import com.example.recipeswapper.ui.screens.favourites.FavouritesScreen
 import com.example.recipeswapper.ui.screens.home.HomeScreen
 import com.example.recipeswapper.ui.screens.profilescreen.ProfileScreen
@@ -87,7 +88,13 @@ fun SwapperNavGraph(
             ProfileScreen(navController)
         }
         composable<SwapperRoute.AddEvent> {
-            AddEventScreen(navController)
+            val addEventVm = koinViewModel<AddEventViewModel>()
+            val state by addEventVm.state.collectAsStateWithLifecycle()
+            AddEventScreen(
+                navController,
+                state,
+                onSubmit = { /* TODO */},
+                addEventVm.actions)
         }
         composable<SwapperRoute.Fav> {
             FavouritesScreen(
