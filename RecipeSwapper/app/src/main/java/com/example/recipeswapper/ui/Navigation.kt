@@ -70,7 +70,7 @@ fun SwapperNavGraph(
             HomeScreen(
                 recipesState,
                 queryState,
-                onSubmit = { recipesVm.updateQuery(it) },
+                updateQuery = { recipesVm.updateQuery(it) },
                 navController)
         }
         composable<SwapperRoute.AddRecipe> {
@@ -79,7 +79,7 @@ fun SwapperNavGraph(
             AddRecipeScreen(
                 state,
                 addRecipeVm.actions,
-                onSubmit = { recipesVm.addRecipe(state.toRecipe()) },
+                addRecipe = { recipesVm.addRecipe(state.toRecipe()) },
                 navController
             )
         }
@@ -103,7 +103,7 @@ fun SwapperNavGraph(
         composable<SwapperRoute.Fav> {
             FavouritesScreen(
                 navController,
-                onSubmit = { recipesVm.resetAllFav() },
+                resetAll = { recipesVm.resetAllFav() },
                 recipesState)
         }
         composable<SwapperRoute.Settings> {
@@ -113,7 +113,7 @@ fun SwapperNavGraph(
             val route = backStackEntry.toRoute<SwapperRoute.RecipeDetails>()
             recipesState.recipes.find { it.id == route.recipeId }?. let { recipe ->
                 RecipeDetailsScreen(
-                    onSubmit = { recipesVm.deleteRecipe(recipe) },
+                    deleteRecipe = { recipesVm.deleteRecipe(recipe) },
                     addFav = { recipesVm.updateFav(recipe.id) },
                     removeFav = { recipesVm.updateFav(recipe.id, isFav = false)},
                     recipesState,

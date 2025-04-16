@@ -68,7 +68,7 @@ import com.example.recipeswapper.utils.rememberMultiplePermissions
 fun HomeScreen(
     state: RecipesState,
     queryState: QueryState,
-    onSubmit: (String) -> Unit,
+    updateQuery: (String) -> Unit,
     navController: NavHostController
 ) {
     var isSearching by remember { mutableStateOf(false) }
@@ -161,7 +161,7 @@ fun HomeScreen(
             ) {
                 TextField(
                     value = queryState.query,
-                    onValueChange = { onSubmit(it) },
+                    onValueChange = { updateQuery(it) },
                     placeholder = { Text("Search ...") },
                     singleLine = true,
                     modifier = Modifier

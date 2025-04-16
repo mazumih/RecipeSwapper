@@ -36,7 +36,7 @@ import com.example.recipeswapper.utils.saveImageToStorage
 fun AddRecipeScreen(
     state: AddRecipeState,
     actions: AddRecipeActions,
-    onSubmit: () -> Unit,
+    addRecipe: () -> Unit,
     navController: NavHostController
 ) {
     val cameraLauncher = rememberCameraLauncher(
@@ -51,7 +51,7 @@ fun AddRecipeScreen(
                 containerColor = MaterialTheme.colorScheme.tertiary,
                 onClick = {
                     if(!state.canSubmit) return@FloatingActionButton
-                    onSubmit()
+                    addRecipe()
                     actions.clearForm()
                     navController.navigateUp()
                 }

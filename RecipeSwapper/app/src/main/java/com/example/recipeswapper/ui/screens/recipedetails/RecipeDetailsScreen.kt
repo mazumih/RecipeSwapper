@@ -1,5 +1,6 @@
 package com.example.recipeswapper.ui.screens.recipedetails
 
+import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.recipeswapper.RecipesState
@@ -36,13 +38,27 @@ import com.example.recipeswapper.ui.composable.Size
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeDetailsScreen(
-    onSubmit: () -> Unit,
+    deleteRecipe: () -> Unit,
     addFav: () -> Unit,
     removeFav: () -> Unit,
     state: RecipesState,
     recipe: Recipe,
     navController: NavHostController
 ) {
+    /* SEND RECIPE, COULD BE USED ALSO FOR EVENTS */
+    val ctx = LocalContext.current
+
+    fun shareDetails() {
+        val sendIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, recipe.name)
+        }
+        val shareIntent = Intent.createChooser(sendIntent, "Share Recipe")
+        if (shareIntent.resolveActivity(ctx.packageManager) != null) {
+            ctx.startActivity(shareIntent)
+        }
+    }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -75,7 +91,8 @@ fun RecipeDetailsScreen(
             FloatingActionButton(
                 containerColor = MaterialTheme.colorScheme.tertiary,
                 onClick = {
-                    onSubmit()
+                    //deleteRecipe()
+                    shareDetails()
                     navController.navigateUp()
                 }
             ) {

@@ -24,13 +24,13 @@ import com.example.recipeswapper.ui.composable.NoItemsPlaceholder
 @Composable
 fun FavouritesScreen(
     navController: NavHostController,
-    onSubmit: () -> Unit,
+    resetAll: () -> Unit,
     state: RecipesState
 ) {
     Scaffold(
         topBar = { AppBar(navController, "Favourites") },
         floatingActionButton = {
-            FloatingActionButton(onClick = onSubmit) {
+            FloatingActionButton(onClick = resetAll) {
                 Icon(Icons.Filled.Delete, "Delete all")
             }
         }
