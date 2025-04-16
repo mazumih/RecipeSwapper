@@ -11,6 +11,7 @@ import com.example.recipeswapper.data.repositories.RecipesRepository
 import com.example.recipeswapper.data.repositories.SettingsRepository
 import com.example.recipeswapper.ui.screens.addevent.AddEventViewModel
 import com.example.recipeswapper.ui.screens.addrecipe.AddRecipeViewModel
+import com.example.recipeswapper.ui.screens.profilescreen.ProfileViewModel
 import com.example.recipeswapper.ui.screens.settings.SettingsViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -43,6 +44,8 @@ val appModule = module {
     single { AddRecipeViewModel() }
 
     single { AddEventViewModel() }
+
+    single { ProfileViewModel() }
 
     viewModel { RecipeViewModel(get()) }
 

@@ -1,6 +1,7 @@
 package com.example.recipeswapper.ui
 
-import android.widget.Toast
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,6 +22,7 @@ import com.example.recipeswapper.ui.screens.addevent.AddEventViewModel
 import com.example.recipeswapper.ui.screens.favourites.FavouritesScreen
 import com.example.recipeswapper.ui.screens.home.HomeScreen
 import com.example.recipeswapper.ui.screens.profilescreen.ProfileScreen
+import com.example.recipeswapper.ui.screens.profilescreen.ProfileViewModel
 import com.example.recipeswapper.ui.screens.recipedetails.RecipeDetailsScreen
 import com.example.recipeswapper.ui.screens.settings.SettingsScreen
 import com.example.recipeswapper.ui.screens.settings.ThemeState
@@ -39,6 +41,7 @@ sealed interface SwapperRoute {
     @Serializable data class RecipeDetails(val recipeId: Int): SwapperRoute
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun SwapperNavGraph(
     navController: NavHostController,
@@ -84,7 +87,9 @@ fun SwapperNavGraph(
             BadgeScreen(badges, navController)
         }
         composable<SwapperRoute.Profile> {
-            ProfileScreen(navController)
+            val profileVm = koinViewModel<ProfileViewModel>()
+            val state by profileVm.state.collectAsStateWithLifecycle()
+            ProfileScreen(navController, state, profileVm.actions)
         }
         composable<SwapperRoute.AddEvent> {
             val addEventVm = koinViewModel<AddEventViewModel>()

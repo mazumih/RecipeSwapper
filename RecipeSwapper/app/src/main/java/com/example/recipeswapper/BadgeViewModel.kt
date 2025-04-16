@@ -25,6 +25,17 @@ class BadgeViewModel(
         initialValue = BadgeState(listOf())
     )
 
+    private val badges: List<Badge> = listOf(
+        Badge(R.drawable.bree_badge,"Bree", isUnlocked = false,
+            ""),
+        Badge(R.drawable.susan_badge,"Susan", isUnlocked = false,
+            ""),
+        Badge(R.drawable.lynette_badge,"Lynette", isUnlocked = false,
+            ""),
+        Badge(R.drawable.gabrielle_badge, "Gabrielle", isUnlocked = false,
+            "")
+    )
+
     private val _toastEvent = MutableSharedFlow<String>()
     val toastEvent = _toastEvent.asSharedFlow()
 
@@ -43,14 +54,7 @@ class BadgeViewModel(
 
     private suspend fun initialize() {
         if(repository.getBadgeCount() == 0) {
-            repository.insertBadges(
-                listOf(
-                    Badge(R.drawable.bree_badge,"Bree", isUnlocked = false, ""),
-                    Badge(R.drawable.susan_badge,"Susan", isUnlocked = false, ""),
-                    Badge(R.drawable.lynette_badge,"Lynette", isUnlocked = false, ""),
-                    Badge(R.drawable.gabrielle_badge, "Gabrielle", isUnlocked = false, "")
-                )
-            )
+            repository.insertBadges(badges)
         }
     }
 
