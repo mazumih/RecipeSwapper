@@ -4,15 +4,11 @@ import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room.databaseBuilder
 import com.example.recipeswapper.data.database.BadgesDatabase
-import com.example.recipeswapper.data.database.FavouriteRecipesDatabase
 import com.example.recipeswapper.data.database.RecipeSwapperDatabase
 import com.example.recipeswapper.data.remote.OSMDataSource
 import com.example.recipeswapper.data.repositories.BadgesRepository
-import com.example.recipeswapper.data.repositories.FavouriteRecipesRepository
 import com.example.recipeswapper.data.repositories.RecipesRepository
 import com.example.recipeswapper.data.repositories.SettingsRepository
-import com.example.recipeswapper.ui.AddFavouritesViewModel
-import com.example.recipeswapper.ui.screens.addevent.AddEventScreen
 import com.example.recipeswapper.ui.screens.addevent.AddEventViewModel
 import com.example.recipeswapper.ui.screens.addrecipe.AddRecipeViewModel
 import com.example.recipeswapper.ui.screens.settings.SettingsViewModel
@@ -48,7 +44,7 @@ val appModule = module {
 
     single { AddEventViewModel() }
 
-    viewModel { RecipeViewModel(get(), get()) }
+    viewModel { RecipeViewModel(get()) }
 
     single {
         databaseBuilder(
@@ -70,23 +66,9 @@ val appModule = module {
             .build()
     }
 
-    single {
-        databaseBuilder(
-            get(),
-            FavouriteRecipesDatabase::class.java,
-            "favourites-list"
-        )
-            .fallbackToDestructiveMigration()
-            .build()
-    }
-
     single { BadgesRepository(get<BadgesDatabase>().badgeDao()) }
-
-    single { FavouriteRecipesRepository(get<FavouriteRecipesDatabase>().favRecipesDAO()) }
 
     single { RecipesRepository(get<RecipeSwapperDatabase>().recipesDAO()) }
 
     viewModel { BadgeViewModel(get(), get<RecipeViewModel>().state) }
-
-    viewModel { AddFavouritesViewModel(get()) }
 }

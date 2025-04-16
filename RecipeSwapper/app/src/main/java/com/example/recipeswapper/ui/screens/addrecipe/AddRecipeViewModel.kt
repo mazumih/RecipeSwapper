@@ -10,14 +10,16 @@ import kotlinx.coroutines.flow.update
 data class AddRecipeState(
     val name: String = "",
     val description: String = "",
-    val imageUri: Uri = Uri.EMPTY
+    val imageUri: Uri = Uri.EMPTY,
+    val isFav: Boolean = false
 ) {
     val canSubmit get() = name.isNotBlank() && description.isNotBlank()
 
     fun toRecipe() = Recipe(
         name = name,
         description =  description,
-        imageUri = imageUri.toString()
+        imageUri = imageUri.toString(),
+        isFav = isFav
     )
 }
 
@@ -25,6 +27,7 @@ interface AddRecipeActions {
     fun setName(name: String)
     fun setDescription(description: String)
     fun setUriImage(imageUri: Uri)
+    fun setFav(isFav: Boolean)
     fun clearForm()
 }
 
@@ -43,6 +46,10 @@ class AddRecipeViewModel : ViewModel() {
 
         override fun setUriImage(imageUri: Uri) {
             _state.update { it.copy(imageUri = imageUri) }
+        }
+
+        override fun setFav(isFav: Boolean) {
+            _state.update { it.copy(isFav = isFav) }
         }
 
         override fun clearForm() {

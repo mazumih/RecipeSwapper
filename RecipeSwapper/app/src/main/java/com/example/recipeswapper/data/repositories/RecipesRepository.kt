@@ -11,5 +11,9 @@ class RecipesRepository(
 
     suspend fun upsert(recipe: Recipe) = dao.upsert(recipe)
 
+    suspend fun updateFav(id: Int, isFav: Boolean = true) = dao.updateFav(id, isFav)
+
+    suspend fun resetAllFav() = dao.resetAllFav()
+
     suspend fun delete(recipe: Recipe) = dao.delete(recipe)
 }

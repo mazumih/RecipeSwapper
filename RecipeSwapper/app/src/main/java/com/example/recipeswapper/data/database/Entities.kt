@@ -1,6 +1,5 @@
 package com.example.recipeswapper.data.database
 
-import android.net.Uri
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -10,7 +9,8 @@ data class Recipe(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo val name: String,
     @ColumnInfo val description: String,
-    @ColumnInfo val imageUri: String?
+    @ColumnInfo val imageUri: String?,
+    @ColumnInfo val isFav: Boolean
 )
 
 @Entity

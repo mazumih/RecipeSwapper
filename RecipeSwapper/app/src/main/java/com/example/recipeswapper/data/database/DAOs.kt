@@ -12,8 +12,14 @@ interface RecipesDAO {
     @Query("SELECT * FROM recipe")
     fun getAll(): Flow<List<Recipe>>
 
+    @Query("UPDATE recipe SET isFav = :isFav WHERE id = :id")
+    suspend fun updateFav(id: Int, isFav: Boolean)
+
     @Upsert
     suspend fun upsert(recipe: Recipe)
+
+    @Query("UPDATE recipe SET isFav = 0")
+    suspend fun resetAllFav()
 
     @Delete
     suspend fun delete(recipe: Recipe)

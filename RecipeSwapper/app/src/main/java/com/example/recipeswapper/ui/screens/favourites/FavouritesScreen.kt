@@ -15,7 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.recipeswapper.ui.FavouriteRecipesState
+import com.example.recipeswapper.RecipesState
 import com.example.recipeswapper.ui.SwapperRoute
 import com.example.recipeswapper.ui.composable.AppBar
 import com.example.recipeswapper.ui.screens.home.GridItem
@@ -24,7 +24,7 @@ import com.example.recipeswapper.ui.screens.home.GridItem
 fun FavouritesScreen(
     navController: NavHostController,
     onSubmit: () -> Unit,
-    favState: FavouriteRecipesState
+    state: RecipesState
 ) {
     Scaffold(
         topBar = { AppBar(navController, "Favourites") },
@@ -34,7 +34,9 @@ fun FavouritesScreen(
             }
         }
     ) { contentPadding ->
-        if(favState.favRecipes.isNotEmpty()) {
+        val favRecipes = state.recipes.filter { it.isFav }
+
+        if(favRecipes.isNotEmpty()) {
             /* POSSIBILE DIVERSIFICARE UN PO' RISPETTO ALLA HOME */
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
@@ -43,7 +45,7 @@ fun FavouritesScreen(
                 contentPadding = PaddingValues(8.dp, 8.dp, 8.dp, 80.dp),
                 modifier = Modifier.padding(contentPadding)
             ) {
-                items(favState.favRecipes) { item ->
+                items(favRecipes) { item ->
                     GridItem(
                         onClick = { navController.navigate(SwapperRoute.RecipeDetails(item.id)) },
                         item

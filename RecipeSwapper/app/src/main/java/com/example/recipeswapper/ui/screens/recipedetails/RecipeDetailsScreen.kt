@@ -27,8 +27,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.recipeswapper.RecipesState
 import com.example.recipeswapper.data.database.Recipe
-import com.example.recipeswapper.ui.FavouriteRecipesState
 import com.example.recipeswapper.ui.composable.BottomBar
 import com.example.recipeswapper.ui.composable.ImageWithPlaceholder
 import com.example.recipeswapper.ui.composable.Size
@@ -37,9 +37,9 @@ import com.example.recipeswapper.ui.composable.Size
 @Composable
 fun RecipeDetailsScreen(
     onSubmit: () -> Unit,
-    favSaved: () -> Unit,
-    favRemove: () -> Unit,
-    favState: FavouriteRecipesState,
+    addFav: () -> Unit,
+    removeFav: () -> Unit,
+    state: RecipesState,
     recipe: Recipe,
     navController: NavHostController
 ) {
@@ -53,12 +53,14 @@ fun RecipeDetailsScreen(
                     }
                 },
                 actions = {
-                    if (favState.favRecipes.contains(recipe)) {
-                        IconButton(onClick = favRemove) {
+                    val favRecipes = state.recipes.filter { it.isFav }
+
+                    if (favRecipes.contains(recipe)) {
+                        IconButton(onClick = { removeFav() } ) {
                             Icon(Icons.Filled.Favorite, "Add to favourites")
                         }
                     } else {
-                        IconButton(onClick = favSaved) {
+                        IconButton(onClick = {addFav() }) {
                             Icon(Icons.Filled.FavoriteBorder, "Remove from favourites")
                         }
                     }
