@@ -18,7 +18,8 @@ import androidx.navigation.NavHostController
 import com.example.recipeswapper.RecipesState
 import com.example.recipeswapper.ui.SwapperRoute
 import com.example.recipeswapper.ui.composable.AppBar
-import com.example.recipeswapper.ui.screens.home.GridItem
+import com.example.recipeswapper.ui.composable.GridItem
+import com.example.recipeswapper.ui.composable.NoItemsPlaceholder
 
 @Composable
 fun FavouritesScreen(
@@ -37,7 +38,9 @@ fun FavouritesScreen(
         val favRecipes = state.recipes.filter { it.isFav }
 
         if(favRecipes.isNotEmpty()) {
+
             /* POSSIBILE DIVERSIFICARE UN PO' RISPETTO ALLA HOME */
+
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -52,6 +55,8 @@ fun FavouritesScreen(
                     )
                 }
             }
+        } else {
+            NoItemsPlaceholder(title = "Favourites")
         }
     }
 }

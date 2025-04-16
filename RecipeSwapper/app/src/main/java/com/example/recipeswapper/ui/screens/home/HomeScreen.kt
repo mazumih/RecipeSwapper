@@ -1,6 +1,9 @@
 package com.example.recipeswapper.ui.screens.home
 
+import android.Manifest
 import android.net.Uri
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -52,9 +55,14 @@ import com.example.recipeswapper.RecipesState
 import com.example.recipeswapper.data.database.Recipe
 import com.example.recipeswapper.ui.SwapperRoute
 import com.example.recipeswapper.ui.composable.BottomBar
+import com.example.recipeswapper.ui.composable.GridItem
 import com.example.recipeswapper.ui.composable.ImageWithPlaceholder
+import com.example.recipeswapper.ui.composable.NoItemsPlaceholder
 import com.example.recipeswapper.ui.composable.Size
+import com.example.recipeswapper.utils.PermissionStatus
+import com.example.recipeswapper.utils.rememberMultiplePermissions
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
@@ -64,6 +72,22 @@ fun HomeScreen(
     navController: NavHostController
 ) {
     var isSearching by remember { mutableStateOf(false) }
+
+    /* NOTIFICATION */
+    val notificationPermissions = rememberMultiplePermissions(
+        listOf(Manifest.permission.POST_NOTIFICATIONS)
+    ) { statuses ->
+        when {
+            statuses.any { it.value == PermissionStatus.Granted } -> {}
+            else -> { /* ALERT DIALOG */}
+        }
+    }
+
+    fun requestPermission() {
+        if (!notificationPermissions.statuses.any { it.value.isGranted }) {
+            notificationPermissions.launchPermissionRequest()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -92,6 +116,11 @@ fun HomeScreen(
         floatingActionButtonPosition = FabPosition.Center,
         bottomBar = { BottomBar(navController, "RecipeSwapper") },
     ) { contentPadding ->
+
+        /* SHOULD BE PLACED ON THE LOGIN BUTTON AFTER
+           SUCCESSFULLY CHECKING NAME AND PASSWORD   */
+        requestPermission()
+
         if(state.recipes.isNotEmpty()) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
@@ -108,7 +137,10 @@ fun HomeScreen(
                 }
             }
         } else {
-            NoItemsPlaceholder(Modifier.padding(contentPadding))
+            NoItemsPlaceholder(
+                Modifier.padding(contentPadding),
+                "RecipeSwapper"
+            )
         }
     }
 
@@ -130,7 +162,7 @@ fun HomeScreen(
                 TextField(
                     value = queryState.query,
                     onValueChange = { onSubmit(it) },
-                    placeholder = { Text("Cerca ricetta...") },
+                    placeholder = { Text("Search ...") },
                     singleLine = true,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -145,62 +177,5 @@ fun HomeScreen(
                 )
             }
         }
-    }
-}
-
-@Composable
-fun GridItem(onClick: () -> Unit, item: Recipe) {
-    val ctx = LocalContext.current
-
-    Card(
-        onClick = onClick,
-        modifier = Modifier
-            .size(150.dp)
-            .fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        )
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            ImageWithPlaceholder(Uri.parse(item.imageUri), Size.Sm)
-            Spacer(Modifier.size(8.dp))
-            Text(
-                item.name,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
-
-@Composable
-fun NoItemsPlaceholder(modifier: Modifier = Modifier) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Icon(
-            Icons.Outlined.NoFood, "No Food icon",
-            modifier = Modifier.padding(bottom = 16.dp).size(48.dp),
-            tint = MaterialTheme.colorScheme.secondary
-        )
-        Text(
-            "No recipes",
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-        Text(
-            "Tap the + button to add a new recipe.",
-            style = MaterialTheme.typography.bodyLarge
-        )
     }
 }

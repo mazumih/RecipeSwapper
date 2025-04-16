@@ -24,6 +24,7 @@ import com.example.recipeswapper.ui.screens.profilescreen.ProfileScreen
 import com.example.recipeswapper.ui.screens.recipedetails.RecipeDetailsScreen
 import com.example.recipeswapper.ui.screens.settings.SettingsScreen
 import com.example.recipeswapper.ui.screens.settings.ThemeState
+import com.example.recipeswapper.utils.showBadgeNotification
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
@@ -50,11 +51,11 @@ fun SwapperNavGraph(
     val badgeVm = koinViewModel<BadgeViewModel>()
     val badges by badgeVm.state.collectAsStateWithLifecycle()
 
-    val context = LocalContext.current
+    val ctx = LocalContext.current
 
     LaunchedEffect(Unit) {
-        badgeVm.toastEvent.collect { message ->
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        badgeVm.toastEvent.collect { notification ->
+            showBadgeNotification(ctx, notification)
         }
     }
 
