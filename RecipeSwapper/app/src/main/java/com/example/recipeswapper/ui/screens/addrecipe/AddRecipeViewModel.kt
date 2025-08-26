@@ -2,33 +2,34 @@ package com.example.recipeswapper.ui.screens.addrecipe
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
-import com.example.recipeswapper.data.database.Recipe
+import com.example.recipeswapper.data.models.Ingredient
+import com.example.recipeswapper.data.models.Recipe
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 data class AddRecipeState(
-    val name: String = "",
+    val title: String = "",
     val description: String = "",
-    val imageUri: Uri = Uri.EMPTY,
-    val isFav: Boolean = false
+    val imageURI: Uri = Uri.EMPTY,
+    val ingredients: List<Ingredient> = emptyList()
 ) {
-    val canSubmit get() = name.isNotBlank() && description.isNotBlank()
+    val canSubmit get() = title.isNotBlank() && ingredients.isNotEmpty() && description.isNotBlank() && imageURI != Uri.EMPTY
 
     fun toRecipe() = Recipe(
-        name = name,
+        title = title,
         description =  description,
-        imageUri = imageUri.toString(),
-        isFav = isFav
+        imagePath = imageURI.toString(),
+        ingredients = ingredients
     )
 }
 
 interface AddRecipeActions {
-    fun setName(name: String)
+    fun setTitle(title: String)
     fun setDescription(description: String)
-    fun setUriImage(imageUri: Uri)
-    fun setFav(isFav: Boolean)
-    fun clearForm()
+    fun setImage(imageURI: Uri)
+    fun addIngredient(name: String, quantity: String)
+    fun removeIngredient(index: Int)
 }
 
 class AddRecipeViewModel : ViewModel() {
@@ -36,30 +37,27 @@ class AddRecipeViewModel : ViewModel() {
     val state = _state.asStateFlow()
 
     val actions = object : AddRecipeActions {
-        override fun setName(name: String) {
-            _state.update { it.copy(name = name) }
+
+        override fun setTitle(title: String) {
+            _state.update { it.copy(title = title) }
         }
 
         override fun setDescription(description: String) {
             _state.update { it.copy(description = description) }
         }
 
-        override fun setUriImage(imageUri: Uri) {
-            _state.update { it.copy(imageUri = imageUri) }
+        override fun setImage(imageURI: Uri) {
+            _state.update { it.copy(imageURI = imageURI) }
         }
 
-        override fun setFav(isFav: Boolean) {
-            _state.update { it.copy(isFav = isFav) }
+        override fun addIngredient(name: String, quantity: String) {
+            val currentIngredients = _state.value.ingredients + Ingredient(name, quantity)
+            _state.update { it.copy(ingredients = currentIngredients) }
         }
 
-        override fun clearForm() {
-            _state.update {
-                it.copy(
-                    name = "",
-                    description = "",
-                    imageUri = Uri.EMPTY
-                )
-            }
+        override fun removeIngredient(index: Int) {
+            val currentIngredients = _state.value.ingredients.toMutableList().apply { removeAt(index) }
+            _state.update { it.copy(ingredients = currentIngredients) }
         }
     }
 }

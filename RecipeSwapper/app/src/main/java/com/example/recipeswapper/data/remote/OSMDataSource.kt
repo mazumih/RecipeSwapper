@@ -25,12 +25,10 @@ class OSMDataSource(
     companion object {
         private const val BASE_URL = "https://nominatim.openstreetmap.org"
     }
-
     suspend fun searchPlaces(query: String): List<OSMPlace> {
         val url = "$BASE_URL/?q=$query&format=json&limit=1"
         return httpClient.get(url).body()
     }
-
     suspend fun getPlace(coordinates: Coordinates): OSMPlace {
         val url = "$BASE_URL/reverse?lat=${coordinates.latitude}&lon=${coordinates.longitude}&format=json&limit=1"
         return httpClient.get(url).body()

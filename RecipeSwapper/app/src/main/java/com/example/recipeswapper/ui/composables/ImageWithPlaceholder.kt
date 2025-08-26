@@ -1,4 +1,4 @@
-package com.example.recipeswapper.ui.composable
+package com.example.recipeswapper.ui.composables
 
 import android.net.Uri
 import androidx.compose.foundation.Image
@@ -29,7 +29,7 @@ fun ImageWithPlaceholder(uri: Uri?, size: Size) {
                 .data(uri)
                 .crossfade(true)
                 .build(),
-            "Travel picture",
+            "Recipe picture",
             contentScale = ContentScale.Fit,
             modifier = Modifier
                 .size(if (size == Size.Sm) 72.dp else 128.dp)
@@ -38,7 +38,7 @@ fun ImageWithPlaceholder(uri: Uri?, size: Size) {
     } else {
         Image(
             Icons.Outlined.Image,
-            "Food picture",
+            "Recipe picture",
             contentScale = ContentScale.Fit,
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryContainer),
             modifier = Modifier

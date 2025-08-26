@@ -18,32 +18,22 @@ import android.provider.Settings
 
 data class Coordinates(val latitude: Double, val longitude: Double)
 
-class LocationService(private val ctx: Context) {
+class Location(private val ctx: Context) {
     private val fusedLocationClient = getFusedLocationProviderClient(ctx)
-    private val locationManager = ctx.getSystemService(Context.LOCATION_SERVICE)
-            as LocationManager
-
+    private val locationManager = ctx.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private val _coordinates = MutableStateFlow<Coordinates?>(null)
     val coordinates = _coordinates.asStateFlow()
-
     private val _isLoadingLocation = MutableStateFlow(false)
     val isLoadingLocation = _isLoadingLocation.asStateFlow()
 
     suspend fun getCurrentLocation(usePreciseLocation: Boolean = false): Coordinates? {
-        val locationEnabled = locationManager
-            .isProviderEnabled(LocationManager.GPS_PROVIDER)
-
-        if (!locationEnabled)
-            throw IllegalStateException("Location is disabled")
-
+        val locationEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        if (!locationEnabled) throw IllegalStateException("Location is disabled")
         val permissionGranted = ContextCompat.checkSelfPermission(
             ctx,
             Manifest.permission.ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
-
-        if (!permissionGranted)
-            throw SecurityException("Location permission not granted")
-
+        if (!permissionGranted) throw SecurityException("Location permission not granted")
         _isLoadingLocation.value = true
         val location = withContext(Dispatchers.IO) {
             fusedLocationClient.getCurrentLocation(
@@ -53,11 +43,9 @@ class LocationService(private val ctx: Context) {
             ).await()
         }
         _isLoadingLocation.value = false
-
         _coordinates.value =
             if (location != null) Coordinates(location.latitude, location.longitude)
             else null
-
         return coordinates.value
     }
 

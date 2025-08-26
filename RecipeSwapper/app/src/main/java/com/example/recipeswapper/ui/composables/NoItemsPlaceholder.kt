@@ -1,4 +1,4 @@
-package com.example.recipeswapper.ui.composable
+package com.example.recipeswapper.ui.composables
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,29 +16,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun NoItemsPlaceholder(modifier: Modifier = Modifier, title: String) {
+fun NoItemsPlaceholder(modifier: Modifier = Modifier) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxSize()
     ) {
         Icon(
-            Icons.Outlined.NoFood, "No food icon",
+            Icons.Outlined.NoFood, "No Food Icon",
             modifier = Modifier.padding(bottom = 16.dp).size(48.dp),
             tint = MaterialTheme.colorScheme.secondary
         )
         Text(
-            "No recipes",
+            "No Recipes",
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.padding(bottom = 8.dp)
         )
         Text(
-            if(title == "RecipeSwapper") {
-                "Tap the + button to add a new recipe."
-            } else {
-                "Go on homepage and look for something you like."
-            },
+            "Tap the + button to add a new recipe.",
             style = MaterialTheme.typography.bodyLarge
         )
     }

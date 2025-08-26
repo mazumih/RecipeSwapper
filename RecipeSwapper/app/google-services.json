@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "543860212135",
+    "project_id": "recipeswapper-562ce",
+    "storage_bucket": "recipeswapper-562ce.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:543860212135:android:efa6349f72d826ef0a3682",
+        "android_client_info": {
+          "package_name": "com.example.recipeswapper"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZfUBFVbz4ErYAtuhngDh7nI4-m5VmZUI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -6,26 +6,30 @@ import android.content.Context
 import androidx.core.app.NotificationCompat
 import com.example.recipeswapper.R
 
-fun showBadgeNotification(context: Context, message: String) {
-    val notificationManager =
-        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+class NotificationHelper(
+    private val ctx: Context
+) {
+    val notificationManager = ctx.getSystemService(NotificationManager::class.java)
 
-    val channel = NotificationChannel(
-        "badge_channel",
-        "Badge Unlocks",
-        NotificationManager.IMPORTANCE_DEFAULT
-    ).apply {
-        description = "Notifiche per i badge sbloccati"
+    init {
+        val channel = NotificationChannel(
+            "recipeswapper_channel",
+            "RecipeSwapper Notifications",
+            NotificationManager.IMPORTANCE_DEFAULT
+        ).apply {
+            description = "Nuova notifica"
+        }
+        notificationManager.createNotificationChannel(channel)
     }
-    notificationManager.createNotificationChannel(channel)
 
-    val notification = NotificationCompat.Builder(context, "badge_channel")
-        .setSmallIcon(R.drawable.cake)
-        .setContentTitle("Hai sbloccato un badge!")
-        .setContentText(message)
-        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-        .build()
-
-    notificationManager.notify(message.hashCode(), notification)
+    fun notify(title: String, message: String) {
+        val notification = NotificationCompat.Builder(ctx, "recipeswapper_channel")
+            .setContentTitle(title)
+            .setContentText(message)
+            .setSmallIcon(R.drawable.cake)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+            .build()
+        notificationManager.notify(message.hashCode(), notification)
+    }
 }
-

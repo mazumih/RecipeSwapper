@@ -2,63 +2,75 @@ package com.example.recipeswapper.data.database
 
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface RecipesDAO {
-    @Query("SELECT * FROM recipe")
-    fun getAll(): Flow<List<Recipe>>
-
-    @Query("UPDATE recipe SET isFav = :isFav WHERE id = :id")
-    suspend fun updateFav(id: Int, isFav: Boolean)
+interface RecipeDao {
+    @Transaction
+    @Query("SELECT * FROM RecipeEntity")
+    fun getAllRecipes(): Flow<List<RecipeWithIngredients>>
 
     @Upsert
-    suspend fun upsert(recipe: Recipe)
-
-    @Query("UPDATE recipe SET isFav = 0")
-    suspend fun resetAllFav()
+    suspend fun upsertRecipe(recipe: RecipeEntity)
 
     @Delete
-    suspend fun delete(recipe: Recipe)
+    suspend fun deleteRecipe(recipe: RecipeEntity)
+
+    @Upsert
+    suspend fun upsertIngredient(ingredients: List<IngredientEntity>)
+
+    @Delete
+    suspend fun deleteIngredient(ingredient: IngredientEntity)
+
+    @Transaction
+    @Query("SELECT * FROM RecipeEntity WHERE author = :userId")
+    suspend fun getUserRecipes(userId: String): List<RecipeWithIngredients>
+
+    @Query("SELECT * FROM RecipeEntity WHERE id = :recipeId")
+    suspend fun getRecipeById(recipeId: String): RecipeEntity?
 }
 
 @Dao
-interface FavouriteRecipesDAO {
-    @Query("SELECT * FROM recipe")
-    fun getAll(): Flow<List<Recipe>>
+interface UserDao {
+    @Query("SELECT * FROM UserEntity WHERE id = :userId")
+    fun getUser(userId: String): Flow<UserEntity?>
 
     @Upsert
-    suspend fun upsert(favRecipe: Recipe)
+    suspend fun upsertUser(user: UserEntity)
 
     @Delete
-    suspend fun remove(favRecipe: Recipe)
+    suspend fun deleteUser(user: UserEntity)
 
-    /* debugging purpose */
-    @Query("DELETE FROM recipe")
-    suspend fun removeAll()
+    @Query("SELECT * FROM UserEntity WHERE id = :userId")
+    suspend fun getUserById(userId: String): UserEntity?
 }
 
 @Dao
 interface BadgeDao {
-    @Query("SELECT * FROM badge")
-    fun getAllBadges(): Flow<List<Badge>>
+    @Query("SELECT * FROM BadgeEntity")
+    fun getAllBadges(): Flow<List<BadgeEntity>>
 
-    @Insert
-    suspend fun insertAll(badges: List<Badge>)
+    @Upsert
+    suspend fun upsertBadge(badge: BadgeEntity)
 
-    @Query("UPDATE badge SET isUnlocked = 1 WHERE name = :badgeName AND isUnlocked = 0")
-    suspend fun unlockBadge(badgeName: String)
+    @Query("SELECT * FROM BadgeEntity WHERE id = :badgeId")
+    suspend fun getBadgeById(badgeId: String): BadgeEntity?
 
-    @Query("SELECT COUNT(*) FROM badge")
-    suspend fun getBadgeCount(): Int
+    @Query("SELECT * FROM BadgeEntity WHERE id NOT IN (:unlockedBadges)")
+    suspend fun getLockedBadges(unlockedBadges: List<String>): List<BadgeEntity>
+}
 
-    @Query("SELECT EXISTS(SELECT 1 FROM badge WHERE name = :badgeName AND isUnlocked = 1)")
-    suspend fun isUnlocked(badgeName: String) : Boolean
+@Dao
+interface EventDao {
+    @Query("SELECT * FROM EventEntity")
+    fun getAllEvents(): Flow<List<EventEntity>>
 
-    /* debugging purpose */
-    @Query("UPDATE badge SET isUnlocked = 0")
-    suspend fun lockAll()
+    @Upsert
+    suspend fun upsertEvent(event: EventEntity)
+
+    @Query("SELECT * FROM EventEntity WHERE host = :userId")
+    suspend fun getUserEvents(userId: String): List<EventEntity>
 }

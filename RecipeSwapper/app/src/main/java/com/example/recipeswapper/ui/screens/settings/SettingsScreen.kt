@@ -1,6 +1,5 @@
 package com.example.recipeswapper.ui.screens.settings
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,27 +17,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import com.example.recipeswapper.data.repositories.Theme
-import com.example.recipeswapper.ui.composable.AppBar
+import com.example.recipeswapper.data.models.Theme
 
 @Composable
 fun SettingsScreen(
-    navController: NavHostController,
-    state: ThemeState,
+    state: SettingsState,
     onThemeSelected: (Theme) -> Unit
 ) {
-    Scaffold(
-        topBar = { AppBar(navController, title = "Settings") },
-        modifier = Modifier.fillMaxSize()
-    ) { innerPadding ->
+    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         Column(
             Modifier
-                .fillMaxSize()
                 .padding(innerPadding)
-                .selectableGroup(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+                .selectableGroup()
         ) {
             Theme.entries.forEach { theme ->
                 Row(
@@ -51,13 +41,13 @@ fun SettingsScreen(
                             role = Role.RadioButton
                         )
                         .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(
                         selected = (theme == state.theme),
                         onClick = null
                     )
+
                     Text(
                         text = theme.toString(),
                         style = MaterialTheme.typography.bodyLarge,

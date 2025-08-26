@@ -4,37 +4,36 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 
 interface GalleryLauncher {
-    fun getImage()
+    val selectedImageUri: Uri?
+    fun pickImage()
 }
 
 @Composable
 fun rememberGalleryLauncher(
-    onPictureChosen: (imageUri: Uri) -> Unit = {}
-): GalleryLauncher {
+    onImagePicked: (imageUri: Uri) -> Unit = { }
+) : GalleryLauncher {
 
-    var chosenImageUri by rememberSaveable { mutableStateOf(Uri.EMPTY) }
-    val galleryActivityLauncher =
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.GetContent()
-        ) { uri: Uri? ->
-            uri?.let {
-                chosenImageUri = it
-                onPictureChosen(chosenImageUri)
-            }
-        }
+    var selectedImageUri by remember { mutableStateOf(Uri.EMPTY) }
 
-    val galleryLauncher by remember {
-        derivedStateOf {
-            object :  GalleryLauncher {
-                override fun getImage() = galleryActivityLauncher.launch("image/*")
+    val galleryActivityLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { pictureChosen ->
+        if (pictureChosen == null) return@rememberLauncherForActivityResult
+        selectedImageUri = pictureChosen
+        onImagePicked(pictureChosen)
+    }
+
+    val galleryLauncher = remember(galleryActivityLauncher) {
+        object : GalleryLauncher {
+            override val selectedImageUri get() = selectedImageUri
+            override fun pickImage() {
+                galleryActivityLauncher.launch("image/*")
             }
         }
     }

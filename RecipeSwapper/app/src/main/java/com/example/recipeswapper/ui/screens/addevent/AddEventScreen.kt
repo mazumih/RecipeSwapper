@@ -1,32 +1,30 @@
 package com.example.recipeswapper.ui.screens.addevent
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.provider.CalendarContract
 import android.provider.Settings
-import android.widget.Toast
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.material3.AlertDialog
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.outlined.MyLocation
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
@@ -34,44 +32,56 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.example.recipeswapper.data.remote.OSMDataSource
-import com.example.recipeswapper.ui.composable.AppBar
-import com.example.recipeswapper.utils.LocationService
+import com.example.recipeswapper.ui.composables.AppBar
+import com.example.recipeswapper.utils.Location
 import com.example.recipeswapper.utils.PermissionStatus
-import com.example.recipeswapper.utils.isOnline
-import com.example.recipeswapper.utils.openWirelessSettings
 import com.example.recipeswapper.utils.rememberMultiplePermissions
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
+import androidx.compose.material.icons.outlined.MyLocation
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.SelectableDates
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
+import com.example.recipeswapper.utils.isOnline
+import com.example.recipeswapper.utils.openWirelessSettings
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Date
 import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEventScreen(
-    navController: NavHostController,
     state: AddEventState,
+    actions: AddEventActions,
     onSubmit: () -> Unit,
-    actions: AddEventActions
+    navController: NavController
 ) {
     val ctx = LocalContext.current
-    val locationService = remember { LocationService(ctx) }
-
-    var isLoading by remember { mutableStateOf(false) }
+    val location = remember { Location(ctx) }
+    var showDatePicker by remember { mutableStateOf(false) }
 
     val locationPermissions = rememberMultiplePermissions(
-        listOf(
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        )
+        listOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
     ) { statuses ->
         when {
             statuses.any { it.value == PermissionStatus.Granted } -> {}
@@ -83,14 +93,18 @@ fun AddEventScreen(
     }
 
     val osmDataSource = koinInject<OSMDataSource>()
+    val isLoading by location.isLoadingLocation.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
-    fun getCurrentLocationName() = scope.launch {
+
+    var isDateWritten by remember { mutableStateOf(false) }
+
+    fun getCurrentLocation() = scope.launch {
         if (locationPermissions.statuses.none { it.value.isGranted }) {
             locationPermissions.launchPermissionRequest()
             return@launch
         }
         val coordinates = try {
-            locationService.getCurrentLocation() ?: return@launch
+            location.getCurrentLocation() ?: return@launch
         } catch (_: IllegalStateException) {
             actions.setShowLocationDisabledAlert(true)
             return@launch
@@ -105,66 +119,22 @@ fun AddEventScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
-    /* CALENDAR */
-    fun openCalendarWithEvent() {
-        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-
-        try {
-            val date = formatter.parse(state.date)
-            val startMillis = date?.time ?: return
-
-            val intent = Intent(Intent.ACTION_INSERT).apply {
-                data = CalendarContract.Events.CONTENT_URI
-                putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true)
-                putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startMillis)
-                putExtra(CalendarContract.Events.TITLE, state.name)
-                putExtra(CalendarContract.Events.DESCRIPTION, state.description)
-                putExtra(CalendarContract.Events.EVENT_LOCATION, state.location)
-            }
-
-            ctx.startActivity(intent)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Toast.makeText(ctx, "Errore nel formato della data", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    val calendarPermissions = rememberMultiplePermissions(
-        listOf(Manifest.permission.WRITE_CALENDAR, Manifest.permission.READ_CALENDAR)
-    ) { statuses ->
-        when {
-            statuses.any { it.value == PermissionStatus.Granted } ->
-                openCalendarWithEvent()
-            else -> { /* ALERT DIALOG */}
-        }
-    }
-
-    fun openCalendarOrGetRequestPermission() {
-        if (calendarPermissions.statuses.any { it.value.isGranted }) {
-            openCalendarWithEvent()
-        } else {
-            calendarPermissions.launchPermissionRequest()
-        }
-    }
-
     Scaffold(
-        topBar = { AppBar(navController, "Crea Evento") },
+        topBar = { AppBar(navController, "Add Event") },
         floatingActionButton = {
             FloatingActionButton(
                 containerColor = MaterialTheme.colorScheme.tertiary,
                 onClick = {
-                    if(!state.canSubmit) return@FloatingActionButton
-                    //onSubmit
-                    openCalendarOrGetRequestPermission()
-                    //actions.clearForm()
+                    if (!state.canSubmit) return@FloatingActionButton
+                    onSubmit()
                     navController.navigateUp()
                 }
             ) {
-                Icon(Icons.Filled.Check, "Add Event")
+                Icon(Icons.Outlined.Check, "Add Event")
             }
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        }
     ) { contentPadding ->
+
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -174,27 +144,27 @@ fun AddEventScreen(
                 .fillMaxSize()
         ) {
             OutlinedTextField(
-                value = state.name,
-                onValueChange = actions::setName,
-                label = { Text("Nome della serata") },
-                modifier = Modifier.fillMaxWidth(),
+                value = state.title,
+                onValueChange = actions::setTitle,
+                label = { Text("Title") },
+                modifier = Modifier.fillMaxWidth()
             )
-            OutlinedTextField(
-                value = state.date,
-                onValueChange = actions::setDate,
-                label = { Text("Date") },
-                modifier = Modifier.fillMaxWidth(),
-            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             OutlinedTextField(
                 value = state.description,
                 onValueChange = actions::setDescription,
                 label = { Text("Description") },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
             )
+
+            Spacer(Modifier.size(16.dp))
+
             OutlinedTextField(
                 value = state.location,
                 onValueChange = actions::setLocation,
-                label = { Text("Posto") },
+                label = { Text("Location") },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
                     if (isLoading) {
@@ -206,9 +176,9 @@ fun AddEventScreen(
                         IconButton(
                             onClick = {
                                 scope.launch {
-                                    isLoading = true
-                                    getCurrentLocationName().join()
-                                    isLoading = false
+                                    /*isLoading = true*/
+                                    getCurrentLocation().join()
+                                    /*isLoading = false*/
                                 }
                             }
                         ) {
@@ -217,15 +187,89 @@ fun AddEventScreen(
                     }
                 }
             )
-            Spacer(Modifier.size(4.dp))
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = state.dateString,
+                onValueChange = { input ->
+                    if (input.length < state.dateString.length) isDateWritten = true
+                    if (!isDateWritten) return@OutlinedTextField
+
+                    var date = ""
+                    input.forEachIndexed { i, c ->
+                        if (input.length >= state.dateString.length) {
+                            when (i) {
+                                2, 5 -> if (c == '/') date += c
+                                0, 1, 3, 4, 6, 7, 8, 9 -> if (c.isDigit()) date += c
+                            }
+                        }
+                    }
+
+                    if (date.length <= 10) {
+                        actions.setDateString(date)
+                    }
+                },
+                label = { Text("Data") },
+                placeholder = { Text("dd/mm/yyyy") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onFocusChanged { focus ->
+                        isDateWritten = focus.isFocused
+                    },
+                trailingIcon = {
+                    IconButton(
+                        onClick = { showDatePicker = true }
+                    ) {
+                        Icon(Icons.Outlined.CalendarMonth, contentDescription = "Calendario")
+                    }
+                },
+                isError = state.date != null && state.date <= System.currentTimeMillis()
+            )
+
+            if (showDatePicker) {
+                val datePickerState = rememberDatePickerState(
+                    initialSelectedDateMillis = if (state.date != null && state.date >= System.currentTimeMillis()) state.date else System.currentTimeMillis(),
+                    initialDisplayedMonthMillis = if (state.date != null && state.date >= System.currentTimeMillis()) state.date else System.currentTimeMillis(),
+                    selectableDates = object : SelectableDates {
+                        override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                            return utcTimeMillis >= System.currentTimeMillis()
+                        }
+                    }
+                )
+                DatePickerDialog(
+                    onDismissRequest = { showDatePicker = false },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                datePickerState.selectedDateMillis?.let {
+                                    actions.setDate(it)
+                                }
+                                showDatePicker = false
+                                isDateWritten = false
+                            }
+                        ) { Text("OK") }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = { showDatePicker = false }
+                        ) {
+                            Text("Annulla")
+                        }
+                    }
+                ) {
+                    DatePicker(state = datePickerState)
+                }
+            }
         }
+
         if (state.showLocationDisabledAlert) {
             AlertDialog(
                 title = { Text("Location disabled") },
                 text = { Text("Location must be enabled to get your coordinates in the app.") },
                 confirmButton = {
                     TextButton(onClick = {
-                        locationService.openLocationSettings()
+                        location.openLocationSettings()
                         actions.setShowLocationDisabledAlert(false)
                     }) {
                         Text("Enable")
@@ -238,11 +282,10 @@ fun AddEventScreen(
                         Text("Dismiss")
                     }
                 },
-                onDismissRequest = {
-                    actions.setShowLocationDisabledAlert(false)
-                }
+                onDismissRequest = { actions.setShowLocationDisabledAlert(false) }
             )
         }
+
         if (state.showLocationPermissionDeniedAlert) {
             AlertDialog(
                 title = { Text("Location permission denied") },
@@ -265,6 +308,7 @@ fun AddEventScreen(
                 onDismissRequest = { actions.setShowLocationPermissionDeniedAlert(false) }
             )
         }
+
         if (state.showLocationPermissionPermanentlyDeniedSnackbar) {
             LaunchedEffect(snackbarHostState) {
                 val res = snackbarHostState.showSnackbar(
@@ -281,9 +325,10 @@ fun AddEventScreen(
                         ctx.startActivity(intent)
                     }
                 }
-                actions.setShowLocationPermissionDeniedAlert(false)
+                actions.setShowLocationPermissionPermanentlyDeniedSnackbar(false)
             }
         }
+
         if (state.showNoInternetConnectivitySnackbar) {
             LaunchedEffect(snackbarHostState) {
                 val res = snackbarHostState.showSnackbar(
@@ -297,5 +342,6 @@ fun AddEventScreen(
                 actions.setShowNoInternetConnectivitySnackbar(false)
             }
         }
+
     }
 }

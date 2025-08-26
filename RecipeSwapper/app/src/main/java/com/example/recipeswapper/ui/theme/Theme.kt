@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.example.recipeswapper.data.models.Theme
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -39,11 +40,17 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun RecipeSwapperTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    theme: Theme,
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
+    val darkTheme = when (theme) {
+        Theme.Light -> false
+        Theme.Dark -> true
+        Theme.System -> isSystemInDarkTheme()
+    }
+
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
@@ -59,7 +66,9 @@ fun RecipeSwapperTheme(
         SideEffect {
             val window = (view.context as Activity).window
             window.statusBarColor = colorScheme.primaryContainer.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+            WindowCompat
+                .getInsetsController(window, view)
+                .isAppearanceLightStatusBars = !darkTheme
         }
     }
 

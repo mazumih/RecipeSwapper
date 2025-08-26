@@ -6,41 +6,36 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import com.example.recipeswapper.RecipesState
-import com.example.recipeswapper.ui.SwapperRoute
-import com.example.recipeswapper.ui.composable.AppBar
-import com.example.recipeswapper.ui.composable.GridItem
-import com.example.recipeswapper.ui.composable.NoItemsPlaceholder
+import androidx.navigation.NavController
+import com.example.recipeswapper.ui.RecipesState
+import com.example.recipeswapper.ui.composables.AppBar
+import com.example.recipeswapper.ui.composables.NoItemsPlaceholder
+import com.example.recipeswapper.ui.composables.GridItem
+import com.example.recipeswapper.ui.screens.user.UserActions
+import com.example.recipeswapper.ui.screens.user.UserState
 
 @Composable
 fun FavouritesScreen(
-    navController: NavHostController,
-    resetAll: () -> Unit,
-    state: RecipesState
+    recipesState: RecipesState,
+    userState: UserState,
+    onRecipeClick: (String) -> Unit,
+    navController: NavController,
+    actions: UserActions
 ) {
+    val favouriteRecipes = recipesState.recipes.filter { recipe ->
+        userState.currentUser?.favouriteRecipes?.contains(recipe.id) == true
+    }
+
     Scaffold(
-        topBar = { AppBar(navController, "Favourites") },
-        floatingActionButton = {
-            FloatingActionButton(onClick = resetAll) {
-                Icon(Icons.Filled.Delete, "Delete all")
-            }
-        }
+        topBar = { AppBar(navController, title = "Preferiti") },
     ) { contentPadding ->
-        val favRecipes = state.recipes.filter { it.isFav }
-
-        if(favRecipes.isNotEmpty()) {
-
-            /* POSSIBILE DIVERSIFICARE UN PO' RISPETTO ALLA HOME */
-
+        if (favouriteRecipes.isEmpty()) {
+            NoItemsPlaceholder(Modifier.padding(contentPadding))
+        } else {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -48,15 +43,15 @@ fun FavouritesScreen(
                 contentPadding = PaddingValues(8.dp, 8.dp, 8.dp, 80.dp),
                 modifier = Modifier.padding(contentPadding)
             ) {
-                items(favRecipes) { item ->
+                items(favouriteRecipes) { recipe ->
                     GridItem(
-                        onClick = { navController.navigate(SwapperRoute.RecipeDetails(item.id)) },
-                        item
+                        recipe,
+                        onClick = { onRecipeClick(recipe.id) },
+                        actions,
+                        userState.currentUser?.favouriteRecipes ?: emptyList()
                     )
                 }
             }
-        } else {
-            NoItemsPlaceholder(title = "Favourites")
         }
     }
 }

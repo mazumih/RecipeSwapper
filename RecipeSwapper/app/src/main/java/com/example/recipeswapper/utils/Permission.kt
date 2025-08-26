@@ -5,7 +5,6 @@ import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,7 +16,6 @@ enum class PermissionStatus {
     Granted,
     Denied,
     PermanentlyDenied;
-
     val isGranted get() = this == Granted
     val isDenied get() = this == Denied || this == PermanentlyDenied
 }
@@ -32,6 +30,7 @@ fun rememberMultiplePermissions(
     permissions: List<String>,
     onResult: (status: Map<String, PermissionStatus>) -> Unit
 ): MultiplePermissionHandler {
+
     val activity = LocalActivity.current!!
 
     var statuses by remember {
@@ -61,13 +60,11 @@ fun rememberMultiplePermissions(
         onResult(statuses)
     }
 
-    val permissionHandler by remember {
-        derivedStateOf {
-            object : MultiplePermissionHandler {
-                override val statuses = statuses
-                override fun launchPermissionRequest() =
-                    permissionLauncher.launch(permissions.toTypedArray())
-            }
+    val permissionHandler = remember(permissionLauncher) {
+        object : MultiplePermissionHandler {
+            override val statuses get() = statuses
+            override fun launchPermissionRequest() =
+                permissionLauncher.launch(permissions.toTypedArray())
         }
     }
     return permissionHandler
