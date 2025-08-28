@@ -12,7 +12,20 @@
           "package_name": "com.example.recipeswapper"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "543860212135-act2u0gne3r8vssa3e1qf4784vngt5bg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.recipeswapper",
+            "certificate_hash": "48052e0e1f0a8a55f0cbf36838ef8daf3999fe02"
+          }
+        },
+        {
+          "client_id": "543860212135-tohas2omrrmnm9fr889m3qmmmhcs9vrr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAZfUBFVbz4ErYAtuhngDh7nI4-m5VmZUI"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "543860212135-tohas2omrrmnm9fr889m3qmmmhcs9vrr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

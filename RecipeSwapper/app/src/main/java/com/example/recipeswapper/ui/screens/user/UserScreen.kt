@@ -40,8 +40,6 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.recipeswapper.ui.RecipeSwapperRoute
 import com.example.recipeswapper.ui.composables.AppBar
-import com.example.recipeswapper.ui.composables.ImageWithPlaceholder
-import com.example.recipeswapper.ui.composables.Size
 import com.example.recipeswapper.utils.rememberCameraLauncher
 import com.example.recipeswapper.utils.rememberGalleryLauncher
 

@@ -24,7 +24,7 @@ class UserRepository(
         }
     }
 
-    suspend fun getUserDB(userId: String) {
+    suspend fun getUserDB(userId: String) : User? {
         val document = firestore.collection("Users").document(userId).get().await()
         val user = document.toObject(User::class.java)?.copy(id = document.id)
 
@@ -40,6 +40,8 @@ class UserRepository(
                 )
             )
         }
+
+        return user
     }
 
     suspend fun upsertUser(user: User) {
