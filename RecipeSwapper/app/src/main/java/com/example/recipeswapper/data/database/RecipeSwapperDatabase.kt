@@ -10,9 +10,10 @@ import androidx.room.TypeConverters
         IngredientEntity::class,
         UserEntity::class,
         BadgeEntity::class,
-        EventEntity::class
+        EventEntity::class,
+        CategoryEntity::class
     ],
-    version = 5
+    version = 6
 )
 @TypeConverters(Converters::class)
 abstract class RecipeSwapperDatabase : RoomDatabase() {
@@ -20,4 +21,5 @@ abstract class RecipeSwapperDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun badgeDao(): BadgeDao
     abstract fun eventDao(): EventDao
+    abstract fun categoryDao(): CategoryDao
 }

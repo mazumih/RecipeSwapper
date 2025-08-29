@@ -20,10 +20,10 @@ interface RecipeDao {
     suspend fun deleteRecipe(recipe: RecipeEntity)
 
     @Upsert
-    suspend fun upsertIngredient(ingredients: List<IngredientEntity>)
+    suspend fun upsertIngredients(ingredients: List<IngredientEntity>)
 
     @Delete
-    suspend fun deleteIngredient(ingredient: IngredientEntity)
+    suspend fun deleteIngredients(ingredients: List<IngredientEntity>)
 
     @Transaction
     @Query("SELECT * FROM RecipeEntity WHERE author = :userId")
@@ -73,4 +73,13 @@ interface EventDao {
 
     @Query("SELECT * FROM EventEntity WHERE host = :userId")
     suspend fun getUserEvents(userId: String): List<EventEntity>
+}
+
+@Dao
+interface CategoryDao {
+    @Query("SELECT * FROM CategoryEntity")
+    fun getAllCategories(): Flow<List<CategoryEntity>>
+
+    @Query("SELECT * FROM CategoryEntity WHERE id = :categoryId")
+    suspend fun getCategoryById(categoryId: String): CategoryEntity?
 }

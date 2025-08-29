@@ -35,26 +35,34 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.recipeswapper.ui.composables.AppBar
 import com.example.recipeswapper.ui.composables.ImageWithPlaceholder
 import com.example.recipeswapper.ui.composables.Size
+import com.example.recipeswapper.utils.NotificationHelper
 import com.example.recipeswapper.utils.rememberCameraLauncher
 import com.example.recipeswapper.utils.rememberGalleryLauncher
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 @Composable
 fun AddRecipeScreen(
     state: AddRecipeState,
     actions: AddRecipeActions,
-    onSubmit: () -> Unit,
     navController: NavController
 ) {
+    val author = FirebaseAuth.getInstance().currentUser?.uid ?: ""
     val scope = rememberCoroutineScope()
+
+    val ctx = LocalContext.current
+    val notifier = NotificationHelper(ctx)
 
     var ingredientName by remember { mutableStateOf("") }
     var ingredientQuantity by remember { mutableStateOf("") }
+
+    var isCameraImage by remember { mutableStateOf(false) }
 
     val cameraLauncher = rememberCameraLauncher(
         onPictureTaken = { imageUri -> actions.setImage(imageUri) }
@@ -75,7 +83,7 @@ fun AddRecipeScreen(
                 containerColor = MaterialTheme.colorScheme.tertiary,
                 onClick = {
                     if (!state.canSubmit) return@FloatingActionButton
-                    onSubmit()
+                    actions.addRecipe(state.toRecipe(), author, notifier, isCameraImage)
                     scope.launch {
                         snackbarHostState.showSnackbar("Ricetta aggiunta con successo!")
                     }
@@ -186,6 +194,7 @@ fun AddRecipeScreen(
                         TextButton(
                             onClick = {
                                 showImageOptions = false
+                                isCameraImage = true
                                 cameraLauncher.captureImage()
                             }
                         ) {
@@ -196,6 +205,7 @@ fun AddRecipeScreen(
                         TextButton(
                             onClick = {
                                 showImageOptions = false
+                                isCameraImage = false
                                 galleryLauncher.pickImage()
                             }
                         ) {

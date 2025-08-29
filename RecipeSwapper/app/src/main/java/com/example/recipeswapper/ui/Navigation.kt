@@ -3,6 +3,7 @@ package com.example.recipeswapper.ui
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -49,18 +50,18 @@ fun RecipeSwapperNavGraph(
     modifier: Modifier = Modifier
 ) {
     val currentUser = FirebaseAuth.getInstance().currentUser
+
     val recipesViewModel = koinViewModel<RecipesViewModel>()
     val recipesState by recipesViewModel.state.collectAsStateWithLifecycle()
-    recipesViewModel.updateRecipesDB()
+
     val userViewModel = koinViewModel<UserViewModel>()
     val userState by userViewModel.state.collectAsStateWithLifecycle()
+
     val badgesViewModel = koinViewModel<BadgesViewModel>()
     badgesViewModel.updateBadgesDB()
+
     val eventsViewModel = koinViewModel<EventsViewModel>()
     eventsViewModel.updateEventsDB()
-
-    val ctx = LocalContext.current
-    val notifier = NotificationHelper(ctx)
 
     NavHost(
         navController = navController,
@@ -74,9 +75,10 @@ fun RecipeSwapperNavGraph(
                 onRecipeClick = { recipeId ->
                     navController.navigate(RecipeSwapperRoute.RecipeDetails(recipeId))
                 },
-                onSearch = { query -> recipesViewModel.updateSearch(query)},
+                onSearch = { query -> recipesViewModel.actions.updateSearch(query)},
                 userViewModel.actions,
-                userState
+                userState,
+                recipesViewModel.actions
             )
         }
 
@@ -109,21 +111,18 @@ fun RecipeSwapperNavGraph(
         composable<RecipeSwapperRoute.AddRecipe> {
             val addRecipeViewModel = koinViewModel<AddRecipeViewModel>()
             val state by addRecipeViewModel.state.collectAsStateWithLifecycle()
-            val author = FirebaseAuth.getInstance().currentUser?.uid ?: ""
             AddRecipeScreen(
                 state,
                 addRecipeViewModel.actions,
-                onSubmit = {
-                    recipesViewModel.addRecipe(state.toRecipe(), author, notifier)
-                },
                 navController
             )
         }
 
         composable<RecipeSwapperRoute.RecipeDetails> { backStackEntry ->
             val route = backStackEntry.toRoute<RecipeSwapperRoute.RecipeDetails>()
-            val recipe = requireNotNull(recipesState.recipes.find { it.id == route.recipeId })
-            RecipeDetailsScreen(navController, recipe, userViewModel.actions, userState)
+            val recipe = recipesState.recipes.find { it.id == route.recipeId }
+            if (recipe != null) RecipeDetailsScreen(navController, recipe, userViewModel.actions, userState, recipesViewModel.actions)
+
         }
 
         composable<RecipeSwapperRoute.Favourites> {

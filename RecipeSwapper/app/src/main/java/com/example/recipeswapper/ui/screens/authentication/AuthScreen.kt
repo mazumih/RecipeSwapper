@@ -59,8 +59,11 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.recipeswapper.R
+import com.example.recipeswapper.data.models.Theme
+import com.example.recipeswapper.ui.theme.RecipeSwapperTheme
 import com.example.recipeswapper.utils.Google
 
 @Composable
@@ -115,7 +118,7 @@ fun AuthScreen(
             Spacer(Modifier.height(6.dp))
             Text(
                 "Condividi e scopri nuove ricette",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
                 fontStyle = FontStyle.Italic
             )
@@ -322,7 +325,8 @@ fun AuthScreen(
                 } else {
                     Text(
                         text = if (selected == 0) "Accedi" else "Registrati",
-                        style = MaterialTheme.typography.titleLarge
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
             }

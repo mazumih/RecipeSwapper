@@ -34,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.recipeswapper.data.models.Recipe
+import com.example.recipeswapper.ui.RecipesActions
 import com.example.recipeswapper.ui.composables.BottomBar
 import com.example.recipeswapper.ui.composables.ImageWithPlaceholder
 import com.example.recipeswapper.ui.composables.Size
@@ -47,7 +48,8 @@ fun RecipeDetailsScreen(
     navController: NavController,
     recipe: Recipe,
     userActions: UserActions,
-    userState: UserState
+    userState: UserState,
+    recipesActions: RecipesActions
 ) {
 
     /*val ctx = LocalContext.current
@@ -99,7 +101,7 @@ fun RecipeDetailsScreen(
             FloatingActionButton(
                 containerColor = MaterialTheme.colorScheme.tertiary,
                 onClick = {
-                    //deleteRecipe()
+                    recipesActions.deleteRecipe(recipe)
                     navController.navigateUp()
                 }
             ) {

@@ -68,11 +68,11 @@ val appModule = module {
     single { BadgesRepository(get<RecipeSwapperDatabase>().badgeDao(), get(), get(), get()) }
     single { EventsRepository(get(), get<RecipeSwapperDatabase>().eventDao()) }
 
-    viewModel { RecipesViewModel(get(), get()) }
+    viewModel { RecipesViewModel(get()) }
     viewModel { AuthViewModel(get(), get()) }
     viewModel { UserViewModel(get(), get()) }
     viewModel { SettingsViewModel(get()) }
-    viewModel { AddRecipeViewModel() }
+    viewModel { AddRecipeViewModel(get(), get()) }
     viewModel { BadgesViewModel(get()) }
     viewModel { EventsViewModel(get()) }
     viewModel { AddEventViewModel() }

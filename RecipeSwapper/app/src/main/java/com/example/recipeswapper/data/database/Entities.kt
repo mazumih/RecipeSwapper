@@ -13,7 +13,8 @@ data class RecipeEntity(
     @ColumnInfo val title: String = "",
     @ColumnInfo val description: String = "",
     @ColumnInfo val imagePath: String = "",
-    @ColumnInfo val author: String = ""
+    @ColumnInfo val author: String = "",
+    @ColumnInfo val categories: List<String> = emptyList()
 )
 
 @Entity(
@@ -70,4 +71,10 @@ data class EventEntity(
     @ColumnInfo val host: String = "",
     @ColumnInfo val location: String = "",
     @ColumnInfo val date: Long = 0
+)
+
+@Entity
+data class CategoryEntity(
+    @PrimaryKey val id: String = "",
+    @ColumnInfo val name: String = ""
 )
