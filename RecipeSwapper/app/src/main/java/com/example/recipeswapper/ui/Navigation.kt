@@ -94,9 +94,12 @@ fun RecipeSwapperNavGraph(
         composable<RecipeSwapperRoute.Profile> {
             val authViewModel = koinViewModel<AuthViewModel>()
             val state by userViewModel.state.collectAsStateWithLifecycle()
-            UserScreen(state, userViewModel.actions, logout = {
-                authViewModel.actions.logout()
-                navController.navigate(RecipeSwapperRoute.Authentication)
+            UserScreen(state, recipesState,
+                onRecipeClick = { recipeId ->
+                    navController.navigate(RecipeSwapperRoute.RecipeDetails(recipeId))
+                }, userViewModel.actions, logout = {
+                    authViewModel.actions.logout()
+                    navController.navigate(RecipeSwapperRoute.Authentication)
             }, navController)
         }
 

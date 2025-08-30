@@ -31,7 +31,6 @@ val onError = Color.White
 val errorContainer = Color(0xFFFFDADA)
 val onErrorContainer = Color(0xFF660000)
 
-
 val darkPrimary = Color(0xFFFF8C66)
 val darkOnPrimary = Color(0xFF3B1A12)
 val darkPrimaryContainer = Color(0xFF7F3B2A)
