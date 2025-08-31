@@ -3,10 +3,8 @@ package com.example.recipeswapper.ui
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
@@ -21,12 +19,13 @@ import com.example.recipeswapper.ui.screens.home.HomeScreen
 import com.example.recipeswapper.ui.screens.authentication.AuthScreen
 import com.example.recipeswapper.ui.screens.authentication.AuthViewModel
 import com.example.recipeswapper.ui.screens.badges.BadgesScreen
+import com.example.recipeswapper.ui.screens.category.CategoriesScreen
+import com.example.recipeswapper.ui.screens.category.CategoriesViewModel
 import com.example.recipeswapper.ui.screens.user.UserScreen
 import com.example.recipeswapper.ui.screens.user.UserViewModel
 import com.example.recipeswapper.ui.screens.recipedetails.RecipeDetailsScreen
 import com.example.recipeswapper.ui.screens.settings.SettingsScreen
 import com.example.recipeswapper.ui.screens.settings.SettingsViewModel
-import com.example.recipeswapper.utils.NotificationHelper
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
@@ -41,6 +40,7 @@ sealed interface RecipeSwapperRoute {
     @Serializable data object Favourites : RecipeSwapperRoute
     @Serializable data object Badges : RecipeSwapperRoute
     @Serializable data object AddEvent: RecipeSwapperRoute
+    @Serializable data object Categories: RecipeSwapperRoute
 }
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -49,8 +49,6 @@ fun RecipeSwapperNavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    val currentUser = FirebaseAuth.getInstance().currentUser
-
     val recipesViewModel = koinViewModel<RecipesViewModel>()
     val recipesState by recipesViewModel.state.collectAsStateWithLifecycle()
 
@@ -62,6 +60,10 @@ fun RecipeSwapperNavGraph(
 
     val eventsViewModel = koinViewModel<EventsViewModel>()
     eventsViewModel.updateEventsDB()
+
+    val categoriesViewModel = koinViewModel<CategoriesViewModel>()
+
+    val currentUser = FirebaseAuth.getInstance().currentUser
 
     NavHost(
         navController = navController,
@@ -110,11 +112,14 @@ fun RecipeSwapperNavGraph(
 
         composable<RecipeSwapperRoute.AddRecipe> {
             val addRecipeViewModel = koinViewModel<AddRecipeViewModel>()
-            val state by addRecipeViewModel.state.collectAsStateWithLifecycle()
+            val addRecipeState by addRecipeViewModel.state.collectAsStateWithLifecycle()
+            val categoriesState by categoriesViewModel.state.collectAsStateWithLifecycle()
             AddRecipeScreen(
-                state,
+                addRecipeState,
                 addRecipeViewModel.actions,
-                navController
+                navController,
+                categoriesState,
+                userState.currentUser
             )
         }
 
@@ -154,5 +159,14 @@ fun RecipeSwapperNavGraph(
             )
         }
 
+        composable<RecipeSwapperRoute.Categories> {
+            val state by categoriesViewModel.state.collectAsStateWithLifecycle()
+            CategoriesScreen(state, categoriesViewModel.actions, navController,
+                onFilter = { category ->
+                    recipesViewModel.actions.setCategoryFilter(category)
+                    //navController.navigate(RecipeSwapperRoute.Home)
+                }
+            )
+        }
     }
 }

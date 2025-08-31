@@ -4,11 +4,8 @@ import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material3.AlertDialog
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.recipeswapper.data.remote.OSMDataSource
-import com.example.recipeswapper.ui.composables.AppBar
+import com.example.recipeswapper.ui.composables.TopBar
 import com.example.recipeswapper.utils.Location
 import com.example.recipeswapper.utils.PermissionStatus
 import com.example.recipeswapper.utils.rememberMultiplePermissions
@@ -58,15 +55,8 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.input.TextFieldValue
 import com.example.recipeswapper.utils.isOnline
 import com.example.recipeswapper.utils.openWirelessSettings
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Date
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -120,7 +110,7 @@ fun AddEventScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
-        topBar = { AppBar(navController, "Add Event") },
+        topBar = { TopBar(navController, "Add Event") },
         floatingActionButton = {
             FloatingActionButton(
                 containerColor = MaterialTheme.colorScheme.tertiary,

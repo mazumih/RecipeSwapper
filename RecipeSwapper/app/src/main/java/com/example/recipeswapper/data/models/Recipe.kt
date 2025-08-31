@@ -10,7 +10,11 @@ data class Recipe(
     val imagePath: String = "",
     val author: String = "",
     val ingredients: List<Ingredient> = emptyList(),
-    val categories: List<String> = emptyList()
+    val category: String = "",
+    val recipe: String = "",
+    val portions: Int = 1,
+    val prepTime: Int = 0,
+    val difficulty: String = ""
 )
 
 fun RecipeWithIngredients.toDomain() : Recipe {
@@ -21,7 +25,11 @@ fun RecipeWithIngredients.toDomain() : Recipe {
         imagePath = recipe.imagePath,
         author = recipe.author,
         ingredients = ingredients.map { ing -> ing.toDomain() },
-        categories = recipe.categories
+        category = recipe.category,
+        recipe = recipe.recipe,
+        portions = recipe.portions,
+        prepTime = recipe.prepTime,
+        difficulty = recipe.difficulty
     )
 }
 
@@ -32,6 +40,10 @@ fun Recipe.toEntity() : RecipeEntity {
         description = description,
         imagePath = imagePath,
         author = author,
-        categories = categories
+        category = category,
+        recipe = recipe,
+        portions = portions,
+        prepTime = prepTime,
+        difficulty = difficulty
     )
 }

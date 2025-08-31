@@ -18,27 +18,43 @@ data class AddRecipeState(
     val description: String = "",
     val imageURI: Uri = Uri.EMPTY,
     val ingredients: List<Ingredient> = emptyList(),
-    val categories: List<String> = emptyList()
+    val category: String = "",
+    val recipe: String = "",
+    val portions: Int = 1,
+    val prepTime: Int = 0,
+    val difficulty: String = ""
 ) {
-    val canSubmit get() = title.isNotBlank() && ingredients.isNotEmpty() && description.isNotBlank() && imageURI != Uri.EMPTY
+    val canSubmit get() =
+        title.isNotBlank() && ingredients.isNotEmpty() && description.isNotBlank() && imageURI != Uri.EMPTY &&
+                category.isNotBlank() && recipe.isNotBlank() && prepTime > 0 && difficulty.isNotBlank()
 
     fun toRecipe() = Recipe(
         title = title,
         description =  description,
         imagePath = imageURI.toString(),
         ingredients = ingredients,
-        categories = categories
+        category = category,
+        recipe = recipe,
+        portions = portions,
+        prepTime = prepTime,
+        difficulty = difficulty
     )
 }
 
 interface AddRecipeActions {
     fun setTitle(title: String)
     fun setDescription(description: String)
+    fun setCategory(category: String)
     fun setImage(imageURI: Uri)
     fun addIngredient(name: String, quantity: String)
+    fun updateIngredient(index: Int, newName: String, newQuantity: String)
     fun removeIngredient(index: Int)
-    fun addRecipe(recipe: Recipe, author: String, notifier: NotificationHelper, isCameraImage: Boolean)
-    fun updateRecipe(recipe: Recipe, isCameraImage: Boolean)
+    fun setRecipe(recipe: String)
+    fun setPortions(portions: Int)
+    fun setPrepTime(prepTime: Int)
+    fun setDifficulty(difficulty: String)
+    fun addRecipe(recipe: Recipe, author: String, notifier: NotificationHelper)
+    fun updateRecipe(recipe: Recipe)
 }
 
 class AddRecipeViewModel(
@@ -59,6 +75,10 @@ class AddRecipeViewModel(
             _state.update { it.copy(description = description) }
         }
 
+        override fun setCategory(category: String) {
+            _state.update { it.copy(category = category) }
+        }
+
         override fun setImage(imageURI: Uri) {
             _state.update { it.copy(imageURI = imageURI) }
         }
@@ -68,21 +88,44 @@ class AddRecipeViewModel(
             _state.update { it.copy(ingredients = currentIngredients) }
         }
 
+        override fun updateIngredient(index: Int, newName: String, newQuantity: String) {
+            val updatedIngredients = state.value.ingredients.toMutableList().apply {
+                this[index] = this[index].copy(name = newName, quantity = newQuantity)
+            }
+            _state.update { it.copy(ingredients = updatedIngredients) }
+        }
+
         override fun removeIngredient(index: Int) {
             val currentIngredients = _state.value.ingredients.toMutableList().apply { removeAt(index) }
             _state.update { it.copy(ingredients = currentIngredients) }
         }
 
-        override fun addRecipe(recipe: Recipe, author: String, notifier: NotificationHelper, isCameraImage: Boolean) {
+        override fun setRecipe(recipe: String) {
+            _state.update { it.copy(recipe = recipe) }
+        }
+
+        override fun setPortions(portions: Int) {
+            _state.update { it.copy(portions = portions) }
+        }
+
+        override fun setPrepTime(prepTime: Int) {
+            _state.update { it.copy(prepTime = prepTime) }
+        }
+
+        override fun setDifficulty(difficulty: String) {
+            _state.update { it.copy(difficulty = difficulty) }
+        }
+
+        override fun addRecipe(recipe: Recipe, author: String, notifier: NotificationHelper) {
             viewModelScope.launch {
-                recipesRepository.upsertRecipe(recipe, author, isCameraImage)
+                recipesRepository.upsertRecipe(recipe, author)
                 badgesRepository.checkBadges(author, notifier)
             }
         }
 
-        override fun updateRecipe(recipe: Recipe, isCameraImage: Boolean) {
+        override fun updateRecipe(recipe: Recipe) {
             viewModelScope.launch {
-                recipesRepository.upsertRecipe(recipe, isCameraImage = isCameraImage)
+                recipesRepository.upsertRecipe(recipe)
             }
         }
     }

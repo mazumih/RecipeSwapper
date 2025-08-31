@@ -80,6 +80,9 @@ interface CategoryDao {
     @Query("SELECT * FROM CategoryEntity")
     fun getAllCategories(): Flow<List<CategoryEntity>>
 
+    @Upsert
+    suspend fun upsertCategory(category: CategoryEntity)
+
     @Query("SELECT * FROM CategoryEntity WHERE id = :categoryId")
     suspend fun getCategoryById(categoryId: String): CategoryEntity?
 }

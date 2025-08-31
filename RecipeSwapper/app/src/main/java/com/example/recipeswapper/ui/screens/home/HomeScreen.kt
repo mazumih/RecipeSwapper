@@ -1,6 +1,7 @@
 package com.example.recipeswapper.ui.screens.home
 
 import android.Manifest
+import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
@@ -35,7 +36,7 @@ import androidx.navigation.NavController
 import com.example.recipeswapper.ui.RecipeSwapperRoute
 import com.example.recipeswapper.ui.RecipesActions
 import com.example.recipeswapper.ui.RecipesState
-import com.example.recipeswapper.ui.composables.AppBar
+import com.example.recipeswapper.ui.composables.TopBar
 import com.example.recipeswapper.ui.composables.BottomBar
 import com.example.recipeswapper.ui.composables.NoItemsPlaceholder
 import com.example.recipeswapper.ui.composables.GridItem
@@ -43,6 +44,69 @@ import com.example.recipeswapper.ui.screens.user.UserActions
 import com.example.recipeswapper.ui.screens.user.UserState
 import com.example.recipeswapper.utils.PermissionStatus
 import com.example.recipeswapper.utils.rememberMultiplePermissions
+
+
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.example.recipeswapper.ui.theme.RecipeSwapperTheme
+import com.example.recipeswapper.data.models.Recipe
+import com.example.recipeswapper.data.models.User
+import com.example.recipeswapper.utils.NotificationHelper
+
+/*@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@Preview(showBackground = true)
+@Composable
+fun HomeScreenPreview() {
+    val navController = rememberNavController()
+
+    val dummyRecipes = listOf(
+        Recipe(id = "1", title = "Pasta al pomodoro", description = "Classico italiano"),
+        Recipe(id = "2", title = "Tiramisù", description = "Dolce al caffè")
+    )
+
+    val recipesState = RecipesState(
+        recipes = dummyRecipes,
+        category = "",
+        search = ""
+    )
+
+    val userState = UserState(currentUser = null)
+
+    // Mock vuoti, giusto per compilare
+    val recipesActions = object : RecipesActions{
+        override fun updateRecipesDB() {}
+        override fun updateSearch(query: String) {}
+
+        override fun deleteRecipe(recipe: Recipe) {}
+
+        override fun setCategoryFilter(category: String) {}
+
+    }
+    val userActions = object : UserActions{
+        override fun updateUser(user: User) {}
+
+        override fun updateUserDB(id: String) {}
+
+        override fun setImage(imageURI: Uri) {}
+
+        override fun toggleFavourite(id: String, notifier: NotificationHelper) {}
+
+    }
+
+    RecipeSwapperTheme(theme = com.example.recipeswapper.data.models.Theme.Light) {
+        HomeScreen(
+            recipesState = recipesState,
+            navController = navController,
+            onRecipeClick = {},
+            onSearch = {},
+            userActions = userActions,
+            userState = userState,
+            recipesActions = recipesActions
+        )
+    }
+}*/
+
+
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -104,19 +168,10 @@ import com.example.recipeswapper.utils.rememberMultiplePermissions
 
                 }
             } else {
-                AppBar(navController, title = "RecipeSwapper", onSearchClick = { isSearching = true })
+                TopBar(navController, title = "RecipeSwapper", onSearchClick = { isSearching = true })
             }
         },
-        floatingActionButton = {
-            FloatingActionButton(
-                containerColor = MaterialTheme.colorScheme.primary,
-                onClick = { navController.navigate(RecipeSwapperRoute.AddRecipe) }
-            ) {
-                Icon(Icons.Filled.Add, contentDescription = "Add Recipe")
-            }
-        },
-        floatingActionButtonPosition = FabPosition.Center,
-        bottomBar = { BottomBar(navController, "RecipeSwapper") },
+        bottomBar = { BottomBar(navController, RecipeSwapperRoute.Home) },
     ) { contentPadding ->
 
         requestPermission()

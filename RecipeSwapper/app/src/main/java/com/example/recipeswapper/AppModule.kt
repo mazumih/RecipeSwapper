@@ -7,6 +7,7 @@ import com.example.recipeswapper.data.database.RecipeSwapperDatabase
 import com.example.recipeswapper.data.remote.OSMDataSource
 import com.example.recipeswapper.data.repositories.AuthRepository
 import com.example.recipeswapper.data.repositories.BadgesRepository
+import com.example.recipeswapper.data.repositories.CategoriesRepository
 import com.example.recipeswapper.data.repositories.EventsRepository
 import com.example.recipeswapper.data.repositories.RecipesRepository
 import com.example.recipeswapper.data.repositories.SettingsRepository
@@ -17,6 +18,7 @@ import com.example.recipeswapper.ui.screens.addevent.AddEventViewModel
 import com.example.recipeswapper.ui.screens.addrecipe.AddRecipeViewModel
 import com.example.recipeswapper.ui.screens.authentication.AuthViewModel
 import com.example.recipeswapper.ui.BadgesViewModel
+import com.example.recipeswapper.ui.screens.category.CategoriesViewModel
 import com.example.recipeswapper.ui.screens.user.UserViewModel
 import com.example.recipeswapper.ui.screens.settings.SettingsViewModel
 import com.google.firebase.Firebase
@@ -67,6 +69,7 @@ val appModule = module {
     single { UserRepository(get<RecipeSwapperDatabase>().userDao(), get(), get<Context>().contentResolver) }
     single { BadgesRepository(get<RecipeSwapperDatabase>().badgeDao(), get(), get(), get()) }
     single { EventsRepository(get(), get<RecipeSwapperDatabase>().eventDao()) }
+    single { CategoriesRepository(get<RecipeSwapperDatabase>().categoryDao(), get()) }
 
     viewModel { RecipesViewModel(get()) }
     viewModel { AuthViewModel(get(), get()) }
@@ -76,4 +79,5 @@ val appModule = module {
     viewModel { BadgesViewModel(get()) }
     viewModel { EventsViewModel(get()) }
     viewModel { AddEventViewModel() }
+    viewModel { CategoriesViewModel(get()) }
 }

@@ -79,7 +79,6 @@ class UserViewModel(
                 badgesRepository.checkBadges(user.id, notifier)
             }
         }
-
     }
 
 }

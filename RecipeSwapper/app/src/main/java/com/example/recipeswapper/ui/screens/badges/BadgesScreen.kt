@@ -22,8 +22,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.recipeswapper.data.models.getBadgeIcon
-import com.example.recipeswapper.ui.composables.AppBar
+import com.example.recipeswapper.ui.composables.TopBar
 import com.example.recipeswapper.ui.BadgesState
+import com.example.recipeswapper.ui.RecipeSwapperRoute
+import com.example.recipeswapper.ui.composables.BottomBar
 import com.example.recipeswapper.ui.screens.user.UserState
 
 @Composable
@@ -33,7 +35,8 @@ fun BadgesScreen(
     navController: NavController
 ) {
     Scaffold(
-        topBar = { AppBar(navController, title = "Badges") },
+        topBar = { TopBar(navController, title = "Badges") },
+        bottomBar = { BottomBar(navController, RecipeSwapperRoute.Badges) },
     ) { contentPadding ->
 
         LazyVerticalGrid(

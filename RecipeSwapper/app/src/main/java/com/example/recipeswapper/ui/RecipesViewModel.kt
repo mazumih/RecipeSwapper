@@ -2,6 +2,7 @@ package com.example.recipeswapper.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.recipeswapper.data.models.Category
 import com.example.recipeswapper.data.models.Recipe
 import com.example.recipeswapper.data.repositories.RecipesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,12 +15,12 @@ import kotlinx.coroutines.launch
 data class RecipesState(
     val recipes: List<Recipe> = emptyList(),
     var search: String = "",
-    val category: String? = null
+    val category: Category? = null
 ) {
     val filteredRecipes: List<Recipe>
         get() = recipes.filter { recipe ->
             val searchFilter = search.isBlank() || recipe.title.contains(search, ignoreCase = true)
-            val categoryFilter = category.isNullOrEmpty() || recipe.categories.contains(category)
+            val categoryFilter = category == null || recipe.category.equals(category.name)
             searchFilter && categoryFilter
         }
 }
@@ -28,7 +29,7 @@ interface RecipesActions {
     fun updateRecipesDB()
     fun updateSearch(query: String)
     fun deleteRecipe(recipe: Recipe)
-    fun setCategoryFilter(category: String)
+    fun setCategoryFilter(category: Category)
 }
 
 class RecipesViewModel(
@@ -38,7 +39,7 @@ class RecipesViewModel(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
 
-    private val _categoryFilter = MutableStateFlow<String?>(null)
+    private val _categoryFilter = MutableStateFlow<Category?>(null)
 
     val state = recipesRepository.getAllRecipes()
         .combine(_searchQuery) { recipes, query ->
@@ -72,7 +73,7 @@ class RecipesViewModel(
             }
         }
 
-        override fun setCategoryFilter(category: String) {
+        override fun setCategoryFilter(category: Category) {
             _categoryFilter.value = category
         }
     }

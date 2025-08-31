@@ -14,7 +14,11 @@ data class RecipeEntity(
     @ColumnInfo val description: String = "",
     @ColumnInfo val imagePath: String = "",
     @ColumnInfo val author: String = "",
-    @ColumnInfo val categories: List<String> = emptyList()
+    @ColumnInfo val category: String = "",
+    @ColumnInfo val recipe: String = "",
+    @ColumnInfo val portions: Int = 1,
+    @ColumnInfo val prepTime: Int = 0,
+    @ColumnInfo val difficulty: String = ""
 )
 
 @Entity(
@@ -76,5 +80,6 @@ data class EventEntity(
 @Entity
 data class CategoryEntity(
     @PrimaryKey val id: String = "",
-    @ColumnInfo val name: String = ""
+    @ColumnInfo val name: String = "",
+    @ColumnInfo val icon: String = ""
 )

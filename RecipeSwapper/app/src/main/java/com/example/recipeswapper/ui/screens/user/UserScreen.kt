@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.recipeswapper.ui.RecipeSwapperRoute
-import com.example.recipeswapper.ui.composables.AppBar
+import com.example.recipeswapper.ui.composables.TopBar
 import com.example.recipeswapper.utils.rememberCameraLauncher
 import com.example.recipeswapper.utils.rememberGalleryLauncher
 
@@ -67,7 +67,7 @@ fun UserScreen(
     var showImageOptions by remember { mutableStateOf(false) }
 
     Scaffold(
-        topBar = { AppBar(navController, "Profile") },
+        topBar = { TopBar(navController, "Profile") },
         floatingActionButton = {
             FloatingActionButton(
                 containerColor = MaterialTheme.colorScheme.tertiary,

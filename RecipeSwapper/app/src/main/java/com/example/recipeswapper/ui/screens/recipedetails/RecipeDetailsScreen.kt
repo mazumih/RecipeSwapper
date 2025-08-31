@@ -34,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.recipeswapper.data.models.Recipe
+import com.example.recipeswapper.ui.RecipeSwapperRoute
 import com.example.recipeswapper.ui.RecipesActions
 import com.example.recipeswapper.ui.composables.BottomBar
 import com.example.recipeswapper.ui.composables.ImageWithPlaceholder
@@ -96,7 +97,7 @@ fun RecipeDetailsScreen(
                 )
             )
         },
-        bottomBar = { BottomBar(navController, "Recipe Details") },
+        bottomBar = { BottomBar(navController, null) },
         floatingActionButton = {
             FloatingActionButton(
                 containerColor = MaterialTheme.colorScheme.tertiary,

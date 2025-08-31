@@ -11,8 +11,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.recipeswapper.ui.RecipeSwapperRoute
 import com.example.recipeswapper.ui.RecipesState
-import com.example.recipeswapper.ui.composables.AppBar
+import com.example.recipeswapper.ui.composables.BottomBar
+import com.example.recipeswapper.ui.composables.TopBar
 import com.example.recipeswapper.ui.composables.NoItemsPlaceholder
 import com.example.recipeswapper.ui.composables.GridItem
 import com.example.recipeswapper.ui.screens.user.UserActions
@@ -31,7 +33,8 @@ fun FavouritesScreen(
     }
 
     Scaffold(
-        topBar = { AppBar(navController, title = "Preferiti") },
+        topBar = { TopBar(navController, title = "Preferiti") },
+        bottomBar = { BottomBar(navController, RecipeSwapperRoute.Favourites) },
     ) { contentPadding ->
         if (favouriteRecipes.isEmpty()) {
             NoItemsPlaceholder(Modifier.padding(contentPadding))

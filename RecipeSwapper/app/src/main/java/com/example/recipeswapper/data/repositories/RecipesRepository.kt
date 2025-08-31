@@ -38,13 +38,13 @@ class RecipesRepository(
         }
     }
 
-    suspend fun upsertRecipe(recipe: Recipe, author: String = "", isCameraImage: Boolean) {
+    suspend fun upsertRecipe(recipe: Recipe, author: String = "") {
         val document = if (recipe.id.isBlank()) firestore.collection("Recipes").document() else firestore.collection("Recipes").document(recipe.id)
         var newRecipe = recipe.copy(id = document.id, author = author)
 
         val currentRecipe = dao.getRecipeById(recipe.id)
         var newImageUri = Uri.parse(recipe.imagePath)
-        if (newRecipe.imagePath.isNotEmpty() && recipe.imagePath != currentRecipe?.imagePath && isCameraImage) {
+        if (newRecipe.imagePath.isNotEmpty() && recipe.imagePath != currentRecipe?.imagePath) {
             newImageUri = saveImageToStorage(
                 Uri.parse(newRecipe.imagePath),
                 contentResolver,
