@@ -281,7 +281,8 @@ fun AddEventScreen(
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = MaterialTheme.colorScheme.surface,
                             unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                            focusedLeadingIconColor = MaterialTheme.colorScheme.primary
+                            focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
+                            errorContainerColor = MaterialTheme.colorScheme.surface
                         )
                     )
                     Spacer(modifier = Modifier.height(4.dp))

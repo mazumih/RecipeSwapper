@@ -298,7 +298,7 @@ fun AuthScreen(
                             colors = TextFieldDefaults.colors(
                                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                                errorContainerColor = Color.White
+                                errorContainerColor = MaterialTheme.colorScheme.surface
                             )
                         )
                     }

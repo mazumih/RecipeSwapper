@@ -26,7 +26,7 @@ class NotificationHelper(
         val notification = NotificationCompat.Builder(ctx, "recipeswapper_channel")
             .setContentTitle(title)
             .setContentText(message)
-            .setSmallIcon(R.drawable.cake)
+            .setSmallIcon(R.drawable.icona)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .build()
