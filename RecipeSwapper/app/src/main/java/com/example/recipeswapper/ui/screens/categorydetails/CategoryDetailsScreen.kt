@@ -44,7 +44,7 @@ import com.example.recipeswapper.ui.screens.user.UserState
             verticalArrangement = Arrangement.Top
         ) {
             if (recipes.isEmpty()) {
-                NoItemsPlaceholder(Modifier.padding(contentPadding))
+                NoItemsPlaceholder(Modifier.padding(contentPadding), "Home")
             } else {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),

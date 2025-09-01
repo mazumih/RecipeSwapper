@@ -150,7 +150,7 @@ fun AddEventScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
-        topBar = { TopBar(navController, "Add Event") },
+        topBar = { TopBar(navController, "Nuovo evento") },
     ) { contentPadding ->
         Box(
             modifier = Modifier

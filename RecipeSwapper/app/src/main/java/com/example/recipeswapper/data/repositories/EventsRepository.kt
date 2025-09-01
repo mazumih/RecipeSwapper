@@ -54,10 +54,6 @@ class EventsRepository(
         val currEvent = snapshot.toObject(Event::class.java)?.copy(id = document.id)
 
         if (currEvent != null) {
-            Log.d("EventCheck", "Partecipanti attuali: ${currEvent.participants.size}, max: ${currEvent.maxParticipants}")
-        }
-
-        if (currEvent != null) {
             if (currEvent.participants.contains(userId)) {
                 document.update("participants", FieldValue.arrayRemove()).await()
             } else {

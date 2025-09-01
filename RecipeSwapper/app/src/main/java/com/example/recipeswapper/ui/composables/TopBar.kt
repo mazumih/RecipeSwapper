@@ -79,7 +79,7 @@ fun TopBar(navController: NavController, title: String, onSearchClick: (() -> Un
                         )
                     }
                 }
-                "Profile" -> {
+                "Profilo" -> {
                     IconButton(onClick = { onSearchClick() }) {
                         Icon(
                             Icons.AutoMirrored.Filled.Logout,
@@ -97,7 +97,7 @@ fun TopBar(navController: NavController, title: String, onSearchClick: (() -> Un
                         )
                     }
                 }
-                "Nuova Ricetta" -> {}
+                "Nuova Ricetta", "Nuovo evento", "Impostazioni", "Dettagli Evento" -> {}
                 else -> {
                     IconButton(onClick = { navController.navigate(RecipeSwapperRoute.Profile) }) {
                         Icon(

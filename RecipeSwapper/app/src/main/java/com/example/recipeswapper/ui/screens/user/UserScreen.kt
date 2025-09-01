@@ -99,7 +99,7 @@ fun UserScreen(
     var showImageOptions by remember { mutableStateOf(false) }
 
     Scaffold(
-        topBar = { TopBar(navController, "Profile", logout) },
+        topBar = { TopBar(navController, "Profilo", logout) },
         floatingActionButton = {
             FloatingActionButton(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -110,7 +110,7 @@ fun UserScreen(
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { contentPadding ->
-        LazyColumn (
+        LazyColumn(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -190,11 +190,11 @@ fun UserScreen(
                 Spacer(modifier = Modifier.height(8.dp))
                 TabRow(
                     selectedTabIndex = selected,
-                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), // trasparente
+                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
                     contentColor = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(8.dp)) // meno arrotondato
+                        .clip(RoundedCornerShape(8.dp))
                 ) {
                     options.forEachIndexed { index, title ->
                         Tab(
@@ -223,22 +223,39 @@ fun UserScreen(
                     }
                 }
                 Spacer(Modifier.height(8.dp))
-                if (userRecipes.isEmpty()) {
-                    NoItemsPlaceholder(Modifier.padding(contentPadding))
-                }
-                if (userEvents.isEmpty()) {
-                    NoItemsPlaceholder(Modifier.padding(contentPadding))
-                }
             }
-            when(selected) {
+            when (selected) {
                 0 -> {
-                    items(userRecipes) { recipe ->
-                        RecipeCard(recipe, { onRecipeClick(recipe.id) })
+                    if (userRecipes.isEmpty()) {
+                        item {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                NoItemsPlaceholder(Modifier.padding(contentPadding), "Profilo")
+                            }
+                        }
+                    } else {
+                        items(userRecipes) { recipe ->
+                            RecipeCard(recipe, { onRecipeClick(recipe.id) })
+                        }
                     }
                 }
+
                 1 -> {
-                    items(userEvents) { event ->
-                        EventRow(event, { onEventClick(event.id) })
+                    if (userEvents.isEmpty()) {
+                        item {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                NoItemsPlaceholder(Modifier.padding(contentPadding), "Profilo")
+                            }
+                        }
+                    } else {
+                        items(userEvents) { event ->
+                            EventRow(event, { onEventClick(event.id) })
+                        }
                     }
                 }
             }

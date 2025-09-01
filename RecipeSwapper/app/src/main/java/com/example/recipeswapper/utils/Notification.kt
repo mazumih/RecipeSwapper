@@ -15,7 +15,7 @@ class NotificationHelper(
         val channel = NotificationChannel(
             "recipeswapper_channel",
             "RecipeSwapper Notifications",
-            NotificationManager.IMPORTANCE_DEFAULT
+            NotificationManager.IMPORTANCE_HIGH
         ).apply {
             description = "Nuova notifica"
         }
@@ -27,7 +27,7 @@ class NotificationHelper(
             .setContentTitle(title)
             .setContentText(message)
             .setSmallIcon(R.drawable.cake)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .build()
         notificationManager.notify(message.hashCode(), notification)
