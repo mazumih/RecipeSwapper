@@ -42,7 +42,7 @@ class BadgesRepository(
             badge.toDomain()
         }
 
-        val recipesCreated = recipesRepository
+        val recipesCreated = recipesRepository.getUserRecipes(userId).size
         val favouritesAdded = user.favouriteRecipes.size
         val eventsAdded = eventsRepository.getUserEvents(userId).size
         val cakeRecipes = recipesRepository.getUserRecipes(userId).filter {
