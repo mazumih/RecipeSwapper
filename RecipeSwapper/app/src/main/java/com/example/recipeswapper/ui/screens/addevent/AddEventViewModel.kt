@@ -1,10 +1,13 @@
 package com.example.recipeswapper.ui.screens.addevent
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.recipeswapper.data.models.Event
+import com.example.recipeswapper.data.repositories.EventsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -15,6 +18,9 @@ data class AddEventState(
     val location: String = "",
     val date: Long? = null,
     val dateString: String = "",
+    val maxParticipants: Long = 0,
+    val maxParticipantsString: String = "",
+    val recipeId: String = "",
 
     val showLocationDisabledAlert: Boolean = false,
     val showLocationPermissionDeniedAlert: Boolean = false,
@@ -22,12 +28,15 @@ data class AddEventState(
     val showNoInternetConnectivitySnackbar: Boolean = false
 ) {
     val canSubmit get() = title.isNotBlank() && description.isNotBlank() && location.isNotBlank() && date != null && date >= System.currentTimeMillis()
+            && maxParticipantsString.isNotBlank() && recipeId.isNotBlank()
 
     fun toEvent() = Event(
         title = title,
         description =  description,
         location = location,
-        date = date
+        date = date,
+        maxParticipants = maxParticipants,
+        recipeId = recipeId
     )
 }
 
@@ -37,6 +46,9 @@ interface AddEventActions {
     fun setLocation(location: String)
     fun setDate(date: Long)
     fun setDateString(date: String)
+    fun setMaxParticipantsString(maxParticipantsString: String)
+    fun setRecipe(recipeId: String)
+    fun addEvent(event: Event, host: String)
 
     fun setShowLocationDisabledAlert(show: Boolean)
     fun setShowLocationPermissionDeniedAlert(show: Boolean)
@@ -44,7 +56,10 @@ interface AddEventActions {
     fun setShowNoInternetConnectivitySnackbar(show: Boolean)
 }
 
-class AddEventViewModel : ViewModel() {
+class AddEventViewModel(
+    private val eventsRepository: EventsRepository
+    //private val badgesRepository: BadgesRepository
+) : ViewModel() {
     private val _state = MutableStateFlow(AddEventState())
     val state = _state.asStateFlow()
 
@@ -65,6 +80,10 @@ class AddEventViewModel : ViewModel() {
             _state.update { it.copy(date = date, dateString = formattedDate(date)) }
         }
 
+        override fun setRecipe(recipeId: String) {
+            _state.update { it.copy(recipeId = recipeId)}
+        }
+
         override fun setDateString(date: String) {
             _state.update { it.copy(dateString = date) }
             if (date.length == 10) {
@@ -77,6 +96,18 @@ class AddEventViewModel : ViewModel() {
                     null
                 }
                 if (dateLong != null) _state.update { it.copy(date = dateLong) }
+            }
+        }
+
+        override fun setMaxParticipantsString(maxParticipantsString: String) {
+            _state.update { it.copy(maxParticipants = maxParticipantsString.toLongOrNull() ?: 0) }
+            _state.update { it.copy(maxParticipantsString = maxParticipantsString) }
+        }
+
+        override fun addEvent(event: Event, host: String) {
+            viewModelScope.launch {
+                eventsRepository.addEvent(event, host)
+                //badgesRepository.checkBadges(author, notifier)
             }
         }
 

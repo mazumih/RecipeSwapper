@@ -19,6 +19,7 @@ import com.example.recipeswapper.ui.screens.home.HomeScreen
 import com.example.recipeswapper.ui.screens.authentication.AuthScreen
 import com.example.recipeswapper.ui.screens.authentication.AuthViewModel
 import com.example.recipeswapper.ui.screens.badges.BadgesScreen
+import com.example.recipeswapper.ui.screens.eventdetails.EventDetailsScreen
 import com.example.recipeswapper.ui.screens.category.CategoriesScreen
 import com.example.recipeswapper.ui.screens.category.CategoriesViewModel
 import com.example.recipeswapper.ui.screens.user.UserScreen
@@ -37,6 +38,7 @@ sealed interface RecipeSwapperRoute {
     @Serializable data object Settings : RecipeSwapperRoute
     @Serializable data object AddRecipe : RecipeSwapperRoute
     @Serializable data class RecipeDetails(val recipeId: String) : RecipeSwapperRoute
+    @Serializable data class EventDetails(val eventId: String) : RecipeSwapperRoute
     @Serializable data object Favourites : RecipeSwapperRoute
     @Serializable data object Badges : RecipeSwapperRoute
     @Serializable data object AddEvent: RecipeSwapperRoute
@@ -60,7 +62,8 @@ fun RecipeSwapperNavGraph(
     badgesViewModel.updateBadgesDB()
 
     val eventsViewModel = koinViewModel<EventsViewModel>()
-    eventsViewModel.updateEventsDB()
+    val eventsState by eventsViewModel.state.collectAsStateWithLifecycle()
+    eventsViewModel.actions.updateEventsDB()
 
     val categoriesViewModel = koinViewModel<CategoriesViewModel>()
     categoriesViewModel.actions.updateCategoriesDB()
@@ -79,10 +82,15 @@ fun RecipeSwapperNavGraph(
                 onRecipeClick = { recipeId ->
                     navController.navigate(RecipeSwapperRoute.RecipeDetails(recipeId))
                 },
-                onSearch = { query -> recipesViewModel.actions.updateSearch(query)},
+                onSearch = { query -> recipesViewModel.actions.updateSearch(query)
+                           eventsViewModel.actions.updateSearch(query)},
                 userViewModel.actions,
                 userState,
-                recipesViewModel.actions
+                recipesViewModel.actions,
+                eventsState,
+                onEventClick = { eventId ->
+                    navController.navigate(RecipeSwapperRoute.EventDetails(eventId))
+                }
             )
         }
 
@@ -100,9 +108,15 @@ fun RecipeSwapperNavGraph(
         composable<RecipeSwapperRoute.Profile> {
             val authViewModel = koinViewModel<AuthViewModel>()
             val state by userViewModel.state.collectAsStateWithLifecycle()
-            UserScreen(state, userViewModel.actions, logout = {
-                authViewModel.actions.logout()
-                navController.navigate(RecipeSwapperRoute.Authentication)
+            UserScreen(state, recipesState, eventsState, eventsViewModel.actions,
+                onEventClick = { eventId ->
+                    navController.navigate(RecipeSwapperRoute.EventDetails(eventId))
+                },
+                onRecipeClick = { recipeId ->
+                    navController.navigate(RecipeSwapperRoute.RecipeDetails(recipeId))
+                },  userViewModel.actions, logout = {
+                    authViewModel.actions.logout()
+                    navController.navigate(RecipeSwapperRoute.Authentication)
             }, navController)
         }
 
@@ -135,6 +149,13 @@ fun RecipeSwapperNavGraph(
                 userState.currentUser,
                 recipesViewModel.actions
             )
+            if (recipe != null) RecipeDetailsScreen(navController, recipe, userViewModel.actions, userState, recipesViewModel.actions)
+        }
+
+        composable<RecipeSwapperRoute.EventDetails> { backStackEntry ->
+            val route = backStackEntry.toRoute<RecipeSwapperRoute.EventDetails>()
+            val event = eventsState.events.find { it.id == route.eventId }
+            if (event != null) EventDetailsScreen(navController, event, eventsViewModel.actions, userState, recipesState)
         }
 
         composable<RecipeSwapperRoute.Favourites> {
@@ -161,7 +182,8 @@ fun RecipeSwapperNavGraph(
             AddEventScreen(
                 state,
                 addEventViewModel.actions,
-                onSubmit = { eventsViewModel.addEvent(state.toEvent(), host) },
+                recipesState,
+                userState,
                 navController
             )
         }

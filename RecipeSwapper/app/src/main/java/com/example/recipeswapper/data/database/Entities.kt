@@ -74,7 +74,10 @@ data class EventEntity(
     @ColumnInfo val description: String = "",
     @ColumnInfo val host: String = "",
     @ColumnInfo val location: String = "",
-    @ColumnInfo val date: Long = 0
+    @ColumnInfo val date: Long = 0,
+    @ColumnInfo val maxParticipants: Long = 0,
+    @ColumnInfo val participants: List<String> = emptyList(),
+    @ColumnInfo val recipeId: String = ""
 )
 
 @Entity

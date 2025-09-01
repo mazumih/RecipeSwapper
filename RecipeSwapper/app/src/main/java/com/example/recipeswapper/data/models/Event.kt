@@ -11,7 +11,10 @@ data class Event(
     val description: String = "",
     val host: String = "",
     val location: String = "",
-    val date: Long? = null
+    val date: Long? = null,
+    val maxParticipants: Long = 0,
+    val participants: List<String> = emptyList(),
+    val recipeId: String = ""
 )
 
 fun EventEntity.toDomain() : Event {
@@ -21,7 +24,10 @@ fun EventEntity.toDomain() : Event {
         description = description,
         host = host,
         location = location,
-        date = date
+        date = date,
+        maxParticipants = maxParticipants,
+        participants = participants,
+        recipeId = recipeId
     )
 }
 
@@ -32,7 +38,10 @@ fun Event.toEntity() : EventEntity {
         description = description,
         host = host,
         location = location,
-        date = date ?: 0
+        date = date ?: 0,
+        maxParticipants = maxParticipants,
+        participants = participants,
+        recipeId = recipeId
     )
 }
 
