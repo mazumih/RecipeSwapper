@@ -45,69 +45,6 @@ import com.example.recipeswapper.ui.screens.user.UserState
 import com.example.recipeswapper.utils.PermissionStatus
 import com.example.recipeswapper.utils.rememberMultiplePermissions
 
-
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.rememberNavController
-import com.example.recipeswapper.ui.theme.RecipeSwapperTheme
-import com.example.recipeswapper.data.models.Recipe
-import com.example.recipeswapper.data.models.User
-import com.example.recipeswapper.utils.NotificationHelper
-
-/*@RequiresApi(Build.VERSION_CODES.TIRAMISU)
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    val navController = rememberNavController()
-
-    val dummyRecipes = listOf(
-        Recipe(id = "1", title = "Pasta al pomodoro", description = "Classico italiano"),
-        Recipe(id = "2", title = "Tiramisù", description = "Dolce al caffè")
-    )
-
-    val recipesState = RecipesState(
-        recipes = dummyRecipes,
-        category = "",
-        search = ""
-    )
-
-    val userState = UserState(currentUser = null)
-
-    // Mock vuoti, giusto per compilare
-    val recipesActions = object : RecipesActions{
-        override fun updateRecipesDB() {}
-        override fun updateSearch(query: String) {}
-
-        override fun deleteRecipe(recipe: Recipe) {}
-
-        override fun setCategoryFilter(category: String) {}
-
-    }
-    val userActions = object : UserActions{
-        override fun updateUser(user: User) {}
-
-        override fun updateUserDB(id: String) {}
-
-        override fun setImage(imageURI: Uri) {}
-
-        override fun toggleFavourite(id: String, notifier: NotificationHelper) {}
-
-    }
-
-    RecipeSwapperTheme(theme = com.example.recipeswapper.data.models.Theme.Light) {
-        HomeScreen(
-            recipesState = recipesState,
-            navController = navController,
-            onRecipeClick = {},
-            onSearch = {},
-            userActions = userActions,
-            userState = userState,
-            recipesActions = recipesActions
-        )
-    }
-}*/
-
-
-
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable fun HomeScreen(
@@ -116,14 +53,8 @@ fun HomeScreenPreview() {
     onRecipeClick: (String) -> Unit,
     onSearch: (String) -> Unit,
     userActions: UserActions,
-    userState: UserState,
-    recipesActions: RecipesActions
+    userState: UserState
     ) {
-
-    LaunchedEffect(Unit) {
-        recipesActions.updateRecipesDB()
-    }
-
     var isSearching by remember { mutableStateOf(false) }
 
     val notificationPermissions = rememberMultiplePermissions(
