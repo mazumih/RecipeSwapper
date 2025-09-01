@@ -126,7 +126,7 @@ class AddRecipeViewModel(
         override fun addRecipe(recipe: Recipe, authorId: String, author: String, notifier: NotificationHelper) {
             viewModelScope.launch {
                 recipesRepository.upsertRecipe(recipe, author, authorId)
-                badgesRepository.checkBadges(author, notifier)
+                badgesRepository.checkBadges(authorId, notifier)
             }
         }
 
