@@ -78,7 +78,7 @@ import com.example.recipeswapper.utils.rememberMultiplePermissions
         recipe.authorId != (user?.id ?: "")
     }
 
-    val events = eventsState.events.filter { event ->
+    val events = eventsState.filteredEvents.filter { event ->
         event.host != (user?.id ?: "")
     }
 
