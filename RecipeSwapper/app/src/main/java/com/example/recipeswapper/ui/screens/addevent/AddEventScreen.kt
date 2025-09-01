@@ -178,13 +178,6 @@ fun AddEventScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = "New Event",
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 24.sp,
-                        style = MaterialTheme.typography.titleLarge,
-                    )
                     OutlinedTextField(
                         value = state.title,
                         onValueChange = actions::setTitle,

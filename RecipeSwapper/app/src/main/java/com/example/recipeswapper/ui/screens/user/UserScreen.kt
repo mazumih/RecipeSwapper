@@ -47,9 +47,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.example.recipeswapper.data.models.Event
+import com.example.recipeswapper.data.models.Recipe
+import com.example.recipeswapper.data.models.User
 import com.example.recipeswapper.ui.EventsActions
 import com.example.recipeswapper.ui.EventsState
 import com.example.recipeswapper.ui.RecipeSwapperRoute
@@ -62,6 +67,7 @@ import com.example.recipeswapper.ui.composables.NoItemsPlaceholder
 import com.example.recipeswapper.ui.composables.RecipeCard
 import com.example.recipeswapper.ui.theme.Typography
 import com.example.recipeswapper.ui.theme.primary
+import com.example.recipeswapper.utils.NotificationHelper
 import com.example.recipeswapper.utils.rememberCameraLauncher
 import com.example.recipeswapper.utils.rememberGalleryLauncher
 
@@ -70,7 +76,6 @@ fun UserScreen(
     state: UserState,
     recipesState: RecipesState,
     eventsState: EventsState,
-    eventActions: EventsActions,
     onEventClick: (String) -> Unit,
     onRecipeClick: (String) -> Unit,
     actions: UserActions,
@@ -102,7 +107,7 @@ fun UserScreen(
         topBar = { TopBar(navController, "Profilo", logout) },
         floatingActionButton = {
             FloatingActionButton(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                containerColor = MaterialTheme.colorScheme.primary,
                 onClick = { navController.navigate(RecipeSwapperRoute.AddEvent) }
             ) {
                 Icon(Icons.Outlined.Groups, contentDescription = "Add Event")
@@ -115,7 +120,7 @@ fun UserScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .padding(contentPadding)
-                .padding(12.dp)
+                .padding(16.dp)
                 .fillMaxSize()
         ) {
             item {
@@ -126,7 +131,7 @@ fun UserScreen(
                             contentDescription = "Foto profilo",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
-                                .size(100.dp)
+                                .size(150.dp)
                                 .clip(CircleShape)
                         )
                     } else {
@@ -159,7 +164,6 @@ fun UserScreen(
                     style = Typography.headlineMedium,
                     text = user.username
                 )
-                Spacer(modifier = Modifier.height(8.dp))
                 if (showImageOptions) {
                     AlertDialog(
                         onDismissRequest = { showImageOptions = false },
@@ -187,10 +191,10 @@ fun UserScreen(
                         }
                     )
                 }
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(25.dp))
                 TabRow(
                     selectedTabIndex = selected,
-                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                    containerColor = Color.Transparent,
                     contentColor = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -210,10 +214,9 @@ fun UserScreen(
                                 )
                             },
                             modifier = Modifier
-                                .clip(RoundedCornerShape(8.dp)) // tab più squadrato
+                                .clip(RoundedCornerShape(8.dp))
                                 .background(
                                     if (selected == index) {
-                                        // colore primario semi-trasparente
                                         MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
                                     } else {
                                         Color.Transparent
