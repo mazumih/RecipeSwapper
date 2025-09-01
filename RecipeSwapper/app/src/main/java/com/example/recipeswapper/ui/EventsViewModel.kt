@@ -39,8 +39,6 @@ class EventsViewModel(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
 
-    private val _categoryFilter = MutableStateFlow<String?>(null)
-
     val state = eventsRepository.getAllEvents()
         .combine(_searchQuery) { events, query ->
             EventsState(

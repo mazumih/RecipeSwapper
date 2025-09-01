@@ -36,9 +36,9 @@ fun EventCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp) // respiro tra le card
+            .padding(vertical = 8.dp)
             .clickable { onClick() },
-        shape = RoundedCornerShape(16.dp), // più arrotondata
+        shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,

@@ -28,10 +28,4 @@ class BadgesViewModel (
             badgesRepository.getBadgesDB()
         }
     }
-
-    /*fun checkBadges(userId: String) {
-        viewModelScope.launch {
-            badgesRepository.checkBadges(userId)
-        }
-    }*/
 }

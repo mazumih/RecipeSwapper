@@ -22,9 +22,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarMonth
-import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Group
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -76,7 +74,6 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.sp
 import com.example.recipeswapper.data.models.Recipe
 import com.example.recipeswapper.ui.RecipesState
 import com.example.recipeswapper.ui.screens.user.UserState
@@ -221,9 +218,7 @@ fun AddEventScreen(
                                 IconButton(
                                     onClick = {
                                         scope.launch {
-                                            /*isLoading = true*/
                                             getCurrentLocation().join()
-                                            /*isLoading = false*/
                                         }
                                     }
                                 ) {

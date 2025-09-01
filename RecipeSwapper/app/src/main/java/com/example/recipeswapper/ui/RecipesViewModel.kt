@@ -2,7 +2,6 @@ package com.example.recipeswapper.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.recipeswapper.data.models.Category
 import com.example.recipeswapper.data.models.Recipe
 import com.example.recipeswapper.data.repositories.RecipesRepository
 import kotlinx.coroutines.flow.MutableStateFlow

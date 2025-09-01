@@ -6,7 +6,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,9 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,7 +21,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -47,27 +42,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
-import com.example.recipeswapper.data.models.Event
-import com.example.recipeswapper.data.models.Recipe
-import com.example.recipeswapper.data.models.User
-import com.example.recipeswapper.ui.EventsActions
 import com.example.recipeswapper.ui.EventsState
 import com.example.recipeswapper.ui.RecipeSwapperRoute
 import com.example.recipeswapper.ui.RecipesState
-import com.example.recipeswapper.ui.composables.EventCard
 import com.example.recipeswapper.ui.composables.TopBar
 import com.example.recipeswapper.ui.composables.EventRow
-import com.example.recipeswapper.ui.composables.GridItem
 import com.example.recipeswapper.ui.composables.NoItemsPlaceholder
 import com.example.recipeswapper.ui.composables.RecipeCard
 import com.example.recipeswapper.ui.theme.Typography
 import com.example.recipeswapper.ui.theme.primary
-import com.example.recipeswapper.utils.NotificationHelper
 import com.example.recipeswapper.utils.rememberCameraLauncher
 import com.example.recipeswapper.utils.rememberGalleryLauncher
 

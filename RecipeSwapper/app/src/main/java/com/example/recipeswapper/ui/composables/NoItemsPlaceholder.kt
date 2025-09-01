@@ -9,8 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.NoFood
 import androidx.compose.material.icons.filled.NoMeals
-import androidx.compose.material.icons.outlined.DoNotDisturbAlt
-import androidx.compose.material.icons.outlined.NoFood
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text

@@ -1,12 +1,8 @@
 package com.example.recipeswapper.data.repositories
 
-import android.util.Log
-import androidx.room.util.copy
 import com.example.recipeswapper.data.database.EventDao
 import com.example.recipeswapper.data.database.EventEntity
 import com.example.recipeswapper.data.models.Event
-import com.example.recipeswapper.data.models.Recipe
-import com.example.recipeswapper.data.models.User
 import com.example.recipeswapper.data.models.toDomain
 import com.example.recipeswapper.data.models.toEntity
 import com.google.firebase.firestore.FieldValue

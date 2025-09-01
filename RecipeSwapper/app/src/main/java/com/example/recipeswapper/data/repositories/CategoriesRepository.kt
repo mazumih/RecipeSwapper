@@ -1,6 +1,5 @@
 package com.example.recipeswapper.data.repositories
 
-import com.example.recipeswapper.data.database.BadgeEntity
 import com.example.recipeswapper.data.database.CategoryDao
 import com.example.recipeswapper.data.database.CategoryEntity
 import com.example.recipeswapper.data.models.Category

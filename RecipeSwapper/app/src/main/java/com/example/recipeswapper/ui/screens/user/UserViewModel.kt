@@ -3,8 +3,6 @@ package com.example.recipeswapper.ui.screens.user
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.recipeswapper.data.models.Event
-import com.example.recipeswapper.data.models.Recipe
 import com.example.recipeswapper.data.models.User
 import com.example.recipeswapper.data.repositories.BadgesRepository
 import com.example.recipeswapper.data.repositories.UserRepository
