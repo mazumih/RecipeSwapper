@@ -14,8 +14,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class AddRecipeState(
+    val id: String = "",
     val title: String = "",
     val description: String = "",
+    val author: String = "",
     val imageURI: Uri = Uri.EMPTY,
     val ingredients: List<Ingredient> = emptyList(),
     val category: String = "",
@@ -29,9 +31,11 @@ data class AddRecipeState(
                 category.isNotBlank() && recipe.isNotBlank() && prepTime > 0 && difficulty.isNotBlank()
 
     fun toRecipe() = Recipe(
+        id = id,
         title = title,
         description =  description,
         imagePath = imageURI.toString(),
+        author = author,
         ingredients = ingredients,
         category = category,
         recipe = recipe,
@@ -55,6 +59,7 @@ interface AddRecipeActions {
     fun setDifficulty(difficulty: String)
     fun addRecipe(recipe: Recipe, author: String, notifier: NotificationHelper)
     fun updateRecipe(recipe: Recipe)
+    fun loadRecipe(recipe: Recipe)
 }
 
 class AddRecipeViewModel(
@@ -125,7 +130,25 @@ class AddRecipeViewModel(
 
         override fun updateRecipe(recipe: Recipe) {
             viewModelScope.launch {
-                recipesRepository.upsertRecipe(recipe)
+                recipesRepository.upsertRecipe(recipe, recipe.author)
+            }
+        }
+
+        override fun loadRecipe(recipe: Recipe) {
+            _state.update {
+                it.copy(
+                    id = recipe.id,
+                    title = recipe.title,
+                    description = recipe.description,
+                    imageURI = Uri.parse(recipe.imagePath),
+                    author = recipe.author,
+                    ingredients = recipe.ingredients,
+                    category = recipe.category,
+                    recipe = recipe.recipe,
+                    portions = recipe.portions,
+                    prepTime = recipe.prepTime,
+                    difficulty = recipe.difficulty
+                )
             }
         }
     }

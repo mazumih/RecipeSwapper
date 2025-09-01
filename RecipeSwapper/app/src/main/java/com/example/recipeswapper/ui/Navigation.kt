@@ -41,6 +41,7 @@ sealed interface RecipeSwapperRoute {
     @Serializable data object Badges : RecipeSwapperRoute
     @Serializable data object AddEvent: RecipeSwapperRoute
     @Serializable data object Categories: RecipeSwapperRoute
+    @Serializable data class EditRecipe(val recipeId: String) : RecipeSwapperRoute
 }
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -62,6 +63,7 @@ fun RecipeSwapperNavGraph(
     eventsViewModel.updateEventsDB()
 
     val categoriesViewModel = koinViewModel<CategoriesViewModel>()
+    categoriesViewModel.actions.updateCategoriesDB()
 
     val currentUser = FirebaseAuth.getInstance().currentUser
 
@@ -126,8 +128,13 @@ fun RecipeSwapperNavGraph(
         composable<RecipeSwapperRoute.RecipeDetails> { backStackEntry ->
             val route = backStackEntry.toRoute<RecipeSwapperRoute.RecipeDetails>()
             val recipe = recipesState.recipes.find { it.id == route.recipeId }
-            if (recipe != null) RecipeDetailsScreen(navController, recipe, userViewModel.actions, userState, recipesViewModel.actions)
-
+            if (recipe != null) RecipeDetailsScreen(
+                navController,
+                recipe,
+                userViewModel.actions,
+                userState.currentUser,
+                recipesViewModel.actions
+            )
         }
 
         composable<RecipeSwapperRoute.Favourites> {
@@ -166,6 +173,21 @@ fun RecipeSwapperNavGraph(
                     recipesViewModel.actions.setCategoryFilter(category)
                     //navController.navigate(RecipeSwapperRoute.Home)
                 }
+            )
+        }
+
+        composable<RecipeSwapperRoute.EditRecipe> { backStackEntry ->
+            val route = backStackEntry.toRoute<RecipeSwapperRoute.EditRecipe>()
+            val recipe = recipesState.recipes.find { it.id == route.recipeId }
+            val addRecipeViewModel = koinViewModel<AddRecipeViewModel>()
+            val addRecipeState by addRecipeViewModel.state.collectAsStateWithLifecycle()
+            val categoriesState by categoriesViewModel.state.collectAsStateWithLifecycle()
+            if (recipe != null) AddRecipeScreen(
+                addRecipeState,
+                addRecipeViewModel.actions,
+                navController,
+                categoriesState,
+                recipe = recipe
             )
         }
     }

@@ -38,7 +38,7 @@ class RecipesRepository(
         }
     }
 
-    suspend fun upsertRecipe(recipe: Recipe, author: String = "") {
+    suspend fun upsertRecipe(recipe: Recipe, author: String) {
         val document = if (recipe.id.isBlank()) firestore.collection("Recipes").document() else firestore.collection("Recipes").document(recipe.id)
         var newRecipe = recipe.copy(id = document.id, author = author)
 
@@ -55,6 +55,7 @@ class RecipesRepository(
         newRecipe = newRecipe.copy(imagePath = newImageUri.toString())
         document.set(newRecipe).await()
         dao.upsertRecipe(newRecipe.toEntity())
+        dao.deleteIngredients(recipe.id)
         dao.upsertIngredients(newRecipe.ingredients.map { ing -> ing.toEntity(newRecipe.id) })
     }
 
@@ -64,7 +65,7 @@ class RecipesRepository(
 
     suspend fun deleteRecipe(recipe: Recipe) {
         firestore.collection("Recipes").document(recipe.id).delete().await()
-        dao.deleteIngredients(recipe.ingredients.map { ing -> ing.toEntity(recipe.id) })
+        dao.deleteIngredients(recipe.id)
         dao.deleteRecipe(recipe.toEntity())
     }
 

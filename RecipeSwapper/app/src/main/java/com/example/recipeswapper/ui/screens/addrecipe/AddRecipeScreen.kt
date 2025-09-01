@@ -54,6 +54,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -71,6 +72,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.recipeswapper.data.models.CATEGORY_ORDER
+import com.example.recipeswapper.data.models.Difficulty
+import com.example.recipeswapper.data.models.Recipe
 import com.example.recipeswapper.data.models.User
 import com.example.recipeswapper.ui.composables.TopBar
 import com.example.recipeswapper.ui.screens.category.CategoriesState
@@ -79,21 +83,21 @@ import com.example.recipeswapper.utils.rememberCameraLauncher
 import com.example.recipeswapper.utils.rememberGalleryLauncher
 import kotlinx.coroutines.launch
 
-enum class Difficulty(val level: String) {
-    EASY("Facile"),
-    MEDIUM("Media"),
-    HARD("Difficile")
-}
-
-
 @Composable
 fun AddRecipeScreen(
     addRecipeState: AddRecipeState,
     actions: AddRecipeActions,
     navController: NavController,
     categoriesState: CategoriesState,
-    currentUser: User?
+    currentUser: User? = null,
+    recipe: Recipe? = null
 ) {
+    LaunchedEffect(recipe) {
+        if (recipe != null) {
+            actions.loadRecipe(recipe)
+        }
+    }
+
     val ctx = LocalContext.current
     val notifier = NotificationHelper(ctx)
 
@@ -110,12 +114,16 @@ fun AddRecipeScreen(
         onImagePicked = { imageUri -> actions.setImage(imageUri) }
     )
 
+    val orderedCategories = categoriesState.categories.sortedBy {
+        CATEGORY_ORDER.indexOf(it.name)
+    }
+
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbar) },
-        topBar = { TopBar(navController,"Nuova Ricetta") },
+        topBar = { TopBar(navController,if (recipe != null) "Modifica Ricetta" else "Nuova Ricetta") },
         floatingActionButton = {
             FloatingActionButton(
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -129,7 +137,7 @@ fun AddRecipeScreen(
                         }
                         return@FloatingActionButton
                     }
-                    actions.addRecipe(addRecipeState.toRecipe(), currentUser?.username ?: "", notifier)
+                    if (recipe != null) actions.updateRecipe(addRecipeState.toRecipe()) else actions.addRecipe(addRecipeState.toRecipe(), currentUser?.username ?: "", notifier)
                     navController.navigateUp()
                 }
             ) {
@@ -236,7 +244,7 @@ fun AddRecipeScreen(
                 modifier = Modifier.padding(bottom = 12.dp)
             )
             LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                items(categoriesState.categories) { category ->
+                items(orderedCategories) { category ->
                     val isSelected = category.name == addRecipeState.category
                     ElevatedFilterChip(
                         selected = isSelected,

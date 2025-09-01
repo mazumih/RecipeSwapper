@@ -3,6 +3,12 @@ package com.example.recipeswapper.data.models
 import com.example.recipeswapper.data.database.RecipeEntity
 import com.example.recipeswapper.data.database.RecipeWithIngredients
 
+enum class Difficulty(val level: String) {
+    EASY("Facile"),
+    MEDIUM("Media"),
+    HARD("Difficile")
+}
+
 data class Recipe(
     val id: String = "",
     val title: String = "",

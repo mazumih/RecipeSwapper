@@ -22,8 +22,8 @@ interface RecipeDao {
     @Upsert
     suspend fun upsertIngredients(ingredients: List<IngredientEntity>)
 
-    @Delete
-    suspend fun deleteIngredients(ingredients: List<IngredientEntity>)
+    @Query("DELETE FROM IngredientEntity WHERE recipeId = :recipeId")
+    suspend fun deleteIngredients(recipeId: String)
 
     @Transaction
     @Query("SELECT * FROM RecipeEntity WHERE author = :userId")
