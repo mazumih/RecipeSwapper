@@ -112,7 +112,7 @@ fun RecipeSwapperNavGraph(
         composable<RecipeSwapperRoute.Profile> {
             val authViewModel = koinViewModel<AuthViewModel>()
             val state by userViewModel.state.collectAsStateWithLifecycle()
-            UserScreen(state, recipesState, eventsState, eventsViewModel.actions,
+            UserScreen(state, recipesState, eventsState,
                 onEventClick = { eventId ->
                     navController.navigate(RecipeSwapperRoute.EventDetails(eventId))
                 },

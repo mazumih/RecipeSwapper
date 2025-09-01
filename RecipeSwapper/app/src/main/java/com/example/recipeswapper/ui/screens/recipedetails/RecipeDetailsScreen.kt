@@ -200,6 +200,7 @@ fun RecipeDetailsScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomStart)
+                        .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
                         .background(
                             Brush.verticalGradient(
                                 listOf(Color.Transparent, Color.Black.copy(0.6f))
