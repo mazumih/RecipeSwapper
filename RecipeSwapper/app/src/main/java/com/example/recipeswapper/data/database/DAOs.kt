@@ -26,7 +26,7 @@ interface RecipeDao {
     suspend fun deleteIngredients(recipeId: String)
 
     @Transaction
-    @Query("SELECT * FROM RecipeEntity WHERE author = :userId")
+    @Query("SELECT * FROM RecipeEntity WHERE authorId = :userId")
     suspend fun getUserRecipes(userId: String): List<RecipeWithIngredients>
 
     @Query("SELECT * FROM RecipeEntity WHERE id = :recipeId")

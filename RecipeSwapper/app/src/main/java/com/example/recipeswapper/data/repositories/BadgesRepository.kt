@@ -45,7 +45,7 @@ class BadgesRepository(
         val recipesCreated = recipesRepository
         val favouritesAdded = user.favouriteRecipes.size
         val eventsAdded = eventsRepository.getUserEvents(userId).size
-        val cakeRecipies = recipesRepository.getUserRecipes(userId).filter {
+        val cakeRecipes = recipesRepository.getUserRecipes(userId).filter {
             recipe -> recipe.recipe.category == "Dolci"
         }.size
         val newBadges = mutableListOf<String>()
@@ -55,8 +55,7 @@ class BadgesRepository(
                 BadgeType.Recipes -> recipesCreated >= badge.triggerValue
                 BadgeType.Favourites -> favouritesAdded >= badge.triggerValue
                 BadgeType.Events -> eventsAdded >= badge.triggerValue
-                BadgeType.Dolci -> cakeRecipies >= badge.triggerValue
-                else -> false
+                BadgeType.Dolci -> cakeRecipes >= badge.triggerValue
             }
             if (isTriggered) newBadges.add(badge.id)
         }
