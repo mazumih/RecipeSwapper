@@ -29,7 +29,6 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,7 +43,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.recipeswapper.ui.EventsState
 import com.example.recipeswapper.ui.RecipeSwapperRoute
-import com.example.recipeswapper.ui.RecipesActions
 import com.example.recipeswapper.ui.RecipesState
 import com.example.recipeswapper.ui.composables.TopBar
 import com.example.recipeswapper.ui.composables.BottomBar
@@ -172,7 +170,7 @@ import com.example.recipeswapper.utils.rememberMultiplePermissions
             when(selected) {
                 0 -> {
                     if (recipes.isEmpty()) {
-                        NoItemsPlaceholder(Modifier.padding(contentPadding))
+                        NoItemsPlaceholder(Modifier.padding(contentPadding), "Home")
                     } else {
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(2),
@@ -193,7 +191,7 @@ import com.example.recipeswapper.utils.rememberMultiplePermissions
                 }
                 1 -> {
                     if (events.isEmpty()) {
-                        NoItemsPlaceholder(Modifier.padding(contentPadding))
+                        NoItemsPlaceholder(Modifier.padding(contentPadding), "Home")
                     } else {
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(2),
@@ -202,7 +200,7 @@ import com.example.recipeswapper.utils.rememberMultiplePermissions
                             contentPadding = PaddingValues(8.dp, 8.dp, 8.dp, 80.dp),
                         ) {
                             items(events) { event ->
-                                EventCard(event) { onEventClick(event.id) }
+                                EventCard(event, onClick = {onEventClick(event.id)}, recipesState,)
                             }
                         }
                     }

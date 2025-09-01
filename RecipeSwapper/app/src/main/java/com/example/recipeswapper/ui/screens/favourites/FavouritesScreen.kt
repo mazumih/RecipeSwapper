@@ -37,14 +37,16 @@ fun FavouritesScreen(
         bottomBar = { BottomBar(navController, RecipeSwapperRoute.Favourites) },
     ) { contentPadding ->
         if (favouriteRecipes.isEmpty()) {
-            NoItemsPlaceholder(Modifier.padding(contentPadding))
+            NoItemsPlaceholder(Modifier.padding(contentPadding), "Preferiti")
         } else {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(8.dp, 8.dp, 8.dp, 80.dp),
-                modifier = Modifier.padding(contentPadding)
+                modifier = Modifier
+                    .padding(16.dp)
+                    .padding(contentPadding)
             ) {
                 items(favouriteRecipes) { recipe ->
                     GridItem(

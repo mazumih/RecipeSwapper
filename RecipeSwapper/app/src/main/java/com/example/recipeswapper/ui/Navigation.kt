@@ -158,7 +158,16 @@ fun RecipeSwapperNavGraph(
         composable<RecipeSwapperRoute.EventDetails> { backStackEntry ->
             val route = backStackEntry.toRoute<RecipeSwapperRoute.EventDetails>()
             val event = eventsState.events.find { it.id == route.eventId }
-            if (event != null) EventDetailsScreen(navController, event, eventsViewModel.actions, userState, recipesState)
+            if (event != null) EventDetailsScreen(
+                navController,
+                event,
+                eventsViewModel.actions,
+                userState,
+                recipesState,
+                onRecipeClick = { recipeId ->
+                    navController.navigate(RecipeSwapperRoute.RecipeDetails(recipeId))
+                }
+            )
         }
 
         composable<RecipeSwapperRoute.Favourites> {

@@ -1,5 +1,6 @@
 package com.example.recipeswapper.ui.screens.eventdetails
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -50,7 +51,8 @@ fun EventDetailsScreen (
     event: Event,
     eventsActions: EventsActions,
     state: UserState,
-    recipesState: RecipesState
+    recipesState: RecipesState,
+    onRecipeClick: (String) -> Unit,
 ) {
     val user = state.currentUser
     val recipe = recipesState.recipes.find { recipe ->
@@ -59,18 +61,22 @@ fun EventDetailsScreen (
 
     Scaffold(
         topBar = { TopBar(navController, "Dettagli Evento") },
-        floatingActionButton = {
-            FloatingActionButton(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                onClick = {
-                    eventsActions.deleteEvent(event)
-                    navController.navigateUp()
+            floatingActionButton = {
+                if (user != null) {
+                    if(user.id == event.host) {
+                        FloatingActionButton(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            onClick = {
+                                eventsActions.deleteEvent(event)
+                                navController.navigateUp()
+                            }
+                        ) {
+                            Icon(Icons.Filled.Delete, "Delete event")
+                        }
+                    }
                 }
-            ) {
-                Icon(Icons.Filled.Delete, "Delete event")
-            }
-        },
-        floatingActionButtonPosition = FabPosition.End
+            },
+            floatingActionButtonPosition = FabPosition.End
     ) { contentPadding ->
         Column(
             modifier = Modifier
@@ -114,7 +120,11 @@ fun EventDetailsScreen (
                 }
             }
             Card(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable{
+                        onRecipeClick(event.recipeId)
+                    },
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(4.dp),
                 colors = CardDefaults.cardColors(

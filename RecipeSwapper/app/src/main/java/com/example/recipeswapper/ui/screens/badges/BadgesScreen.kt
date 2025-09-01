@@ -55,7 +55,9 @@ fun BadgesScreen(
         bottomBar = { BottomBar(navController, RecipeSwapperRoute.Badges) },
     ) { contentPadding ->
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .fillMaxSize(),
             contentPadding = contentPadding,
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {

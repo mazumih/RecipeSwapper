@@ -34,7 +34,7 @@ fun SettingsScreen(
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { TopBar(navController, "Settings") }
+        topBar = { TopBar(navController, "Impostazioni") }
     ) {
         innerPadding ->
         Box(
