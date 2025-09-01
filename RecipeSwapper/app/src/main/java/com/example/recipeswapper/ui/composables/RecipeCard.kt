@@ -28,16 +28,14 @@ fun RecipeCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    ElevatedCard( // Card M3 con ombra e shape dinamica
+    ElevatedCard(
         onClick = onClick,
         modifier = modifier,
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
     ) {
         Box {
-            // Background immagine sfocata o gradiente
             val imageUri = Uri.parse(recipe.imagePath)
-
             AsyncImage(
                 model = imageUri,
                 contentDescription = null,
@@ -46,15 +44,11 @@ fun RecipeCard(
                     .matchParentSize()
                     .blur(16.dp)
             )
-
-            // Overlay leggero per migliorare il contrasto
             Box(
                 Modifier
                     .matchParentSize()
                     .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.35f))
             )
-
-            // Testo in overlay
             Column(
                 modifier = Modifier
                     .fillMaxSize()

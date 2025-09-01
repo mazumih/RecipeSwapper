@@ -3,6 +3,8 @@ package com.example.recipeswapper.ui.screens.user
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.recipeswapper.data.models.Event
+import com.example.recipeswapper.data.models.Recipe
 import com.example.recipeswapper.data.models.User
 import com.example.recipeswapper.data.repositories.BadgesRepository
 import com.example.recipeswapper.data.repositories.UserRepository
@@ -21,6 +23,11 @@ data class UserState(
     val currentUser: User? = null,
     var isLoading: Boolean = false
 )
+
+sealed class UserContent {
+    data class EventItem(val event: Event) : UserContent()
+    data class RecipeItem(val recipe: Recipe) : UserContent()
+}
 
 interface UserActions {
     fun updateUser(user: User)
@@ -43,7 +50,6 @@ class UserViewModel(
             started = SharingStarted.WhileSubscribed(),
             initialValue = UserState()
         )
-
 
     val actions = object : UserActions {
 

@@ -13,7 +13,7 @@ import androidx.room.TypeConverters
         EventEntity::class,
         CategoryEntity::class
     ],
-    version = 8
+    version = 11
 )
 @TypeConverters(Converters::class)
 abstract class RecipeSwapperDatabase : RoomDatabase() {
