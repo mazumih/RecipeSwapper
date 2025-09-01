@@ -80,6 +80,7 @@ import androidx.compose.ui.unit.sp
 import com.example.recipeswapper.data.models.Recipe
 import com.example.recipeswapper.ui.RecipesState
 import com.example.recipeswapper.ui.screens.user.UserState
+import com.example.recipeswapper.utils.NotificationHelper
 import com.example.recipeswapper.utils.isOnline
 import com.example.recipeswapper.utils.openWirelessSettings
 import com.google.firebase.auth.FirebaseAuth
@@ -107,6 +108,7 @@ fun AddEventScreen(
     var selectedRecipe by remember { mutableStateOf<Recipe?>(null) }
 
     val ctx = LocalContext.current
+    val notifier = NotificationHelper(ctx)
     val location = remember { Location(ctx) }
     var showDatePicker by remember { mutableStateOf(false) }
 
@@ -356,7 +358,7 @@ fun AddEventScreen(
                     Button(
                         onClick = {
                             if (!state.canSubmit) return@Button
-                            actions.addEvent(state.toEvent(), host)
+                            actions.addEvent(state.toEvent(), host, notifier)
                             navController.navigateUp()
                         },
                         shape = RoundedCornerShape(24.dp),

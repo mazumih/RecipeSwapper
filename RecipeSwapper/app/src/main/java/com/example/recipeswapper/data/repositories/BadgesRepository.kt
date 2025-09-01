@@ -15,7 +15,8 @@ class BadgesRepository(
     private val dao: BadgeDao,
     private val firestore: FirebaseFirestore,
     private val userRepository: UserRepository,
-    private val recipesRepository: RecipesRepository
+    private val recipesRepository: RecipesRepository,
+    private val eventsRepository: EventsRepository
 ) {
     fun getAllBadges() : Flow<List<Badge>> = dao.getAllBadges().map {
         it.map { badge ->
@@ -43,12 +44,18 @@ class BadgesRepository(
 
         val recipesCreated = recipesRepository.getUserRecipes(userId).size
         val favouritesAdded = user.favouriteRecipes.size
+        val eventsAdded = eventsRepository.getUserEvents(userId).size
+        val cakeRecipies = recipesRepository.getUserRecipes(userId).filter {
+            recipe -> recipe.recipe.category == "Dolci"
+        }.size
         val newBadges = mutableListOf<String>()
 
         badges.forEach { badge ->
             val isTriggered = when (badge.type) {
                 BadgeType.Recipes -> recipesCreated >= badge.triggerValue
                 BadgeType.Favourites -> favouritesAdded >= badge.triggerValue
+                BadgeType.Events -> eventsAdded >= badge.triggerValue
+                BadgeType.Dolci -> cakeRecipies >= badge.triggerValue
                 else -> false
             }
             if (isTriggered) newBadges.add(badge.id)

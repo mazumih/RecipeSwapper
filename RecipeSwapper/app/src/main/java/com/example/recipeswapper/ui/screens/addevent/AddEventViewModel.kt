@@ -3,7 +3,9 @@ package com.example.recipeswapper.ui.screens.addevent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.recipeswapper.data.models.Event
+import com.example.recipeswapper.data.repositories.BadgesRepository
 import com.example.recipeswapper.data.repositories.EventsRepository
+import com.example.recipeswapper.utils.NotificationHelper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -48,7 +50,7 @@ interface AddEventActions {
     fun setDateString(date: String)
     fun setMaxParticipantsString(maxParticipantsString: String)
     fun setRecipe(recipeId: String)
-    fun addEvent(event: Event, host: String)
+    fun addEvent(event: Event, host: String, notifier: NotificationHelper)
 
     fun setShowLocationDisabledAlert(show: Boolean)
     fun setShowLocationPermissionDeniedAlert(show: Boolean)
@@ -57,8 +59,8 @@ interface AddEventActions {
 }
 
 class AddEventViewModel(
-    private val eventsRepository: EventsRepository
-    //private val badgesRepository: BadgesRepository
+    private val eventsRepository: EventsRepository,
+    private val badgesRepository: BadgesRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(AddEventState())
     val state = _state.asStateFlow()
@@ -104,10 +106,10 @@ class AddEventViewModel(
             _state.update { it.copy(maxParticipantsString = maxParticipantsString) }
         }
 
-        override fun addEvent(event: Event, host: String) {
+        override fun addEvent(event: Event, host: String, notifier: NotificationHelper) {
             viewModelScope.launch {
                 eventsRepository.addEvent(event, host)
-                //badgesRepository.checkBadges(author, notifier)
+                badgesRepository.checkBadges(host, notifier)
             }
         }
 

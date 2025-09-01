@@ -69,7 +69,7 @@ val appModule = module {
     single { SettingsRepository(get()) }
     single { RecipesRepository(get(), get<RecipeSwapperDatabase>().recipeDao(), get<Context>().contentResolver) }
     single { UserRepository(get<RecipeSwapperDatabase>().userDao(), get(), get<Context>().contentResolver) }
-    single { BadgesRepository(get<RecipeSwapperDatabase>().badgeDao(), get(), get(), get()) }
+    single { BadgesRepository(get<RecipeSwapperDatabase>().badgeDao(), get(), get(), get(), get()) }
     single { EventsRepository(get(), get<RecipeSwapperDatabase>().eventDao()) }
     single { CategoriesRepository(get<RecipeSwapperDatabase>().categoryDao(), get()) }
 
@@ -80,7 +80,7 @@ val appModule = module {
     viewModel { AddRecipeViewModel(get(), get()) }
     viewModel { BadgesViewModel(get()) }
     viewModel { EventsViewModel(get()) }
-    viewModel { AddEventViewModel(get()) }
+    viewModel { AddEventViewModel(get(), get()) }
     viewModel { CategoriesViewModel(get()) }
     viewModel { CategoryDetailsViewModel(get()) }
 }
