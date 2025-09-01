@@ -40,6 +40,7 @@ import com.example.recipeswapper.data.models.formatDate
 import com.example.recipeswapper.ui.EventsActions
 import com.example.recipeswapper.ui.RecipesState
 import com.example.recipeswapper.ui.composables.BottomBar
+import com.example.recipeswapper.ui.composables.TopBar
 import com.example.recipeswapper.ui.screens.user.UserState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,23 +58,10 @@ fun EventDetailsScreen (
     }
 
     Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(event.title) },
-                navigationIcon = {
-                    IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, "Back to previous page")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceDim
-                )
-            )
-        },
-        bottomBar = { BottomBar(navController, "Event Details") },
+        topBar = { TopBar(navController, "Dettagli Evento") },
         floatingActionButton = {
             FloatingActionButton(
-                containerColor = MaterialTheme.colorScheme.tertiary,
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
                 onClick = {
                     eventsActions.deleteEvent(event)
                     navController.navigateUp()
@@ -82,7 +70,7 @@ fun EventDetailsScreen (
                 Icon(Icons.Filled.Delete, "Delete event")
             }
         },
-        floatingActionButtonPosition = FabPosition.Center
+        floatingActionButtonPosition = FabPosition.End
     ) { contentPadding ->
         Column(
             modifier = Modifier
@@ -100,6 +88,10 @@ fun EventDetailsScreen (
                 )
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "Info",
+                        style = MaterialTheme.typography.headlineLarge
+                    )
                     Text(
                         text = event.title,
                         style = MaterialTheme.typography.bodyMedium
@@ -132,6 +124,10 @@ fun EventDetailsScreen (
                 Column(modifier = Modifier.padding(16.dp)) {
                     if (recipe != null) {
                         Text(
+                            text = "Recipe",
+                            style = MaterialTheme.typography.headlineLarge
+                        )
+                        Text(
                             text = recipe.title,
                             style = MaterialTheme.typography.bodyMedium
                         )
@@ -161,14 +157,14 @@ fun EventDetailsScreen (
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "Partecipanti",
-                        style = MaterialTheme.typography.titleMedium
+                        text = "Participants",
+                        style = MaterialTheme.typography.headlineLarge
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "${event.participants.size} / ${event.maxParticipants}",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = if (event.participants.size >= event.maxParticipants) Color.Red else Color.White
+                        color = if (event.participants.size >= event.maxParticipants) Color.Red else MaterialTheme.colorScheme.onSurface
                     )
                 }
             }

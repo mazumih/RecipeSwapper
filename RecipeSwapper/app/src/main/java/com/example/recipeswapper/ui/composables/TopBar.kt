@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,7 +31,7 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(navController: NavController, title: String, onSearchClick: () -> Unit = {}) {
+fun TopBar(navController: NavController, title: String, onSearchClick: (() -> Unit) = {}) {
     TopAppBar(
         title = {
             Row(
@@ -78,6 +80,14 @@ fun TopBar(navController: NavController, title: String, onSearchClick: () -> Uni
                     }
                 }
                 "Profile" -> {
+                    IconButton(onClick = { onSearchClick() }) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.Logout,
+                            "Profile",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(30.dp)
+                        )
+                    }
                     IconButton(onClick = { navController.navigate(RecipeSwapperRoute.Settings) } ) {
                         Icon(
                             Icons.Filled.Settings,

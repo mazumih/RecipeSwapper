@@ -5,23 +5,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.AccountCircle
@@ -29,40 +27,34 @@ import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.example.recipeswapper.data.models.Event
-import com.example.recipeswapper.data.models.Recipe
 import com.example.recipeswapper.ui.EventsActions
 import com.example.recipeswapper.ui.EventsState
 import com.example.recipeswapper.ui.RecipeSwapperRoute
 import com.example.recipeswapper.ui.RecipesState
+import com.example.recipeswapper.ui.composables.EventCard
 import com.example.recipeswapper.ui.composables.TopBar
 import com.example.recipeswapper.ui.composables.EventRow
 import com.example.recipeswapper.ui.composables.GridItem
@@ -70,7 +62,6 @@ import com.example.recipeswapper.ui.composables.NoItemsPlaceholder
 import com.example.recipeswapper.ui.composables.RecipeCard
 import com.example.recipeswapper.ui.theme.Typography
 import com.example.recipeswapper.ui.theme.primary
-import com.example.recipeswapper.ui.composables.TopBar
 import com.example.recipeswapper.utils.rememberCameraLauncher
 import com.example.recipeswapper.utils.rememberGalleryLauncher
 
@@ -89,13 +80,12 @@ fun UserScreen(
     val user = state.currentUser!!
     val userEvents = eventsState.events
         .filter { it.participants.contains(user.id) || it.host == user.id }
-        .map { UserContent.EventItem(it) }
 
     val userRecipes = recipesState.recipes
         .filter { it.author == user.id }
-        .map { UserContent.RecipeItem(it) }
 
-    val allItems = userEvents + userRecipes
+    var selected by rememberSaveable { mutableStateOf(0) }
+    val options = listOf("Ricette", "Eventi")
 
     val cameraLauncher = rememberCameraLauncher(
         onPictureTaken = {
@@ -109,10 +99,10 @@ fun UserScreen(
     var showImageOptions by remember { mutableStateOf(false) }
 
     Scaffold(
-        topBar = { TopBar(navController, "Profile") },
+        topBar = { TopBar(navController, "Profile", logout) },
         floatingActionButton = {
             FloatingActionButton(
-                containerColor = MaterialTheme.colorScheme.tertiary,
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
                 onClick = { navController.navigate(RecipeSwapperRoute.AddEvent) }
             ) {
                 Icon(Icons.Outlined.Groups, contentDescription = "Add Event")
@@ -150,7 +140,7 @@ fun UserScreen(
                     }
                     Box(
                         modifier = Modifier
-                            .size(28.dp) // dimensione effettiva del bottone
+                            .size(28.dp)
                             .background(primary, CircleShape)
                             .border(2.dp, Color.White, CircleShape)
                             .clickable { showImageOptions = true },
@@ -170,17 +160,6 @@ fun UserScreen(
                     text = user.username
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                Button(
-                    onClick = { navController.navigate(RecipeSwapperRoute.Badges) }
-                ) {
-                    Text("Badges")
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                Button(onClick = {
-                    logout()
-                }) {
-                    Text("Logout")
-                }
                 if (showImageOptions) {
                     AlertDialog(
                         onDismissRequest = { showImageOptions = false },
@@ -208,24 +187,59 @@ fun UserScreen(
                         }
                     )
                 }
-                if (allItems.isEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                TabRow(
+                    selectedTabIndex = selected,
+                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), // trasparente
+                    contentColor = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(8.dp)) // meno arrotondato
+                ) {
+                    options.forEachIndexed { index, title ->
+                        Tab(
+                            selected = selected == index,
+                            onClick = { selected = index },
+                            text = {
+                                Text(
+                                    text = title,
+                                    color = if (selected == index) MaterialTheme.colorScheme.onPrimary
+                                    else MaterialTheme.colorScheme.primary,
+                                    fontWeight = if (selected == index) FontWeight.Bold else FontWeight.Normal,
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                            },
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp)) // tab più squadrato
+                                .background(
+                                    if (selected == index) {
+                                        // colore primario semi-trasparente
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+                                    } else {
+                                        Color.Transparent
+                                    }
+                                )
+                        )
+                    }
+                }
+                Spacer(Modifier.height(8.dp))
+                if (userRecipes.isEmpty()) {
+                    NoItemsPlaceholder(Modifier.padding(contentPadding))
+                }
+                if (userEvents.isEmpty()) {
                     NoItemsPlaceholder(Modifier.padding(contentPadding))
                 }
             }
-            items(allItems) { item ->
-                when (item) {
-                    is UserContent.EventItem -> EventRow(
-                        event = item.event,
-                        onClick = { onEventClick(item.event.id) }
-                    )
-                    is UserContent.RecipeItem -> RecipeCard(
-                        recipe = item.recipe,
-                        onClick = { onRecipeClick(item.recipe.id) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(180.dp)
-                            .padding(horizontal = 16.dp)
-                    )
+            when(selected) {
+                0 -> {
+                    items(userRecipes) { recipe ->
+                        RecipeCard(recipe, { onRecipeClick(recipe.id) })
+                    }
+                }
+                1 -> {
+                    items(userEvents) { event ->
+                        EventRow(event, { onEventClick(event.id) })
+                    }
                 }
             }
         }

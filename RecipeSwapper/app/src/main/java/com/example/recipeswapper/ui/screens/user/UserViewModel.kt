@@ -24,11 +24,6 @@ data class UserState(
     var isLoading: Boolean = false
 )
 
-sealed class UserContent {
-    data class EventItem(val event: Event) : UserContent()
-    data class RecipeItem(val recipe: Recipe) : UserContent()
-}
-
 interface UserActions {
     fun updateUser(user: User)
     fun updateUserDB(id: String)

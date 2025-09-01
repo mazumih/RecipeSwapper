@@ -31,8 +31,8 @@ fun EventCard(
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardColors(
-            contentColor = MaterialTheme.colorScheme.primaryContainer,
-            containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
             disabledContainerColor = Color.Gray,
             disabledContentColor = Color.Gray
         )
@@ -59,7 +59,7 @@ fun EventCard(
             Text(
                 text = "${event.participants.size}/${event.maxParticipants}",
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(8.dp)

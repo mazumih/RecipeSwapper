@@ -34,8 +34,8 @@ fun EventRow(
             .clickable { onClick() },
         elevation = CardDefaults.cardElevation(4.dp),
         colors = CardColors(
-            contentColor = MaterialTheme.colorScheme.primaryContainer,
-            containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
             disabledContainerColor = Color.Gray,
             disabledContentColor = Color.Gray,
         )

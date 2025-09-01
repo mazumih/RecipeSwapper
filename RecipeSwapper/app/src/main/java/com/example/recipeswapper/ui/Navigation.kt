@@ -123,7 +123,7 @@ fun RecipeSwapperNavGraph(
         composable<RecipeSwapperRoute.Settings> {
             val settingsViewModel = koinViewModel<SettingsViewModel>()
             val state by settingsViewModel.state.collectAsStateWithLifecycle()
-            SettingsScreen(state, settingsViewModel::changeTheme)
+            SettingsScreen(state, settingsViewModel::changeTheme, navController)
         }
 
         composable<RecipeSwapperRoute.AddRecipe> {
@@ -149,7 +149,6 @@ fun RecipeSwapperNavGraph(
                 userState.currentUser,
                 recipesViewModel.actions
             )
-            if (recipe != null) RecipeDetailsScreen(navController, recipe, userViewModel.actions, userState, recipesViewModel.actions)
         }
 
         composable<RecipeSwapperRoute.EventDetails> { backStackEntry ->

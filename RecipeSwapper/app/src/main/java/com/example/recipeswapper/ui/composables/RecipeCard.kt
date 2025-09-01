@@ -42,7 +42,6 @@ fun RecipeCard(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .matchParentSize()
-                    .blur(16.dp)
             )
             Box(
                 Modifier

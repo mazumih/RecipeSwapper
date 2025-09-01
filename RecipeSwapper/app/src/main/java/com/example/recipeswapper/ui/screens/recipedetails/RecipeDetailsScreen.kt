@@ -89,7 +89,14 @@ fun RecipeDetailsScreen(
     fun shareDetails() {
         val sendIntent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
-            putExtra(Intent.EXTRA_TEXT, recipe.title)
+            if (currentUser != null) {
+                putExtra(
+                    Intent.EXTRA_TEXT,
+                    "${currentUser.username} vuole condividere con te la ricetta di ${recipe.author}. " +
+                          "Si tratta di \"${recipe.title}\". " +
+                          "Per visualizzarla scarica l'app *Recipe Swapper* sul tuo smartphone."
+                )
+            }
         }
         val shareIntent = Intent.createChooser(sendIntent, "Share Recipe")
         if (shareIntent.resolveActivity(ctx.packageManager) != null) {
