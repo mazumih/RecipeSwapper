@@ -137,7 +137,7 @@ fun AddRecipeScreen(
                         }
                         return@FloatingActionButton
                     }
-                    if (recipe != null) actions.updateRecipe(addRecipeState.toRecipe()) else actions.addRecipe(addRecipeState.toRecipe(), currentUser?.id ?: "", notifier)
+                    if (recipe != null) actions.updateRecipe(addRecipeState.toRecipe()) else actions.addRecipe(addRecipeState.toRecipe(), currentUser?.id ?: "", currentUser?.username ?: "", notifier)
                     navController.navigateUp()
                 }
             ) {

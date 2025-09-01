@@ -13,7 +13,7 @@ data class RecipeEntity(
     @ColumnInfo val title: String = "",
     @ColumnInfo val description: String = "",
     @ColumnInfo val imagePath: String = "",
-    @ColumnInfo val author: String = "",
+    @ColumnInfo val author: List<String> = emptyList(),
     @ColumnInfo val category: String = "",
     @ColumnInfo val recipe: String = "",
     @ColumnInfo val portions: Int = 1,

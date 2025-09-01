@@ -82,7 +82,7 @@ fun UserScreen(
         .filter { it.participants.contains(user.id) || it.host == user.id }
 
     val userRecipes = recipesState.recipes
-        .filter { it.author == user.id }
+        .filter { it.authorId == user.id }
 
     var selected by rememberSaveable { mutableStateOf(0) }
     val options = listOf("Ricette", "Eventi")

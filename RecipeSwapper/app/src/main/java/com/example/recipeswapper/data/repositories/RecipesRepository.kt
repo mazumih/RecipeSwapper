@@ -38,9 +38,9 @@ class RecipesRepository(
         }
     }
 
-    suspend fun upsertRecipe(recipe: Recipe, author: String) {
+    suspend fun upsertRecipe(recipe: Recipe, author: String, authorId: String) {
         val document = if (recipe.id.isBlank()) firestore.collection("Recipes").document() else firestore.collection("Recipes").document(recipe.id)
-        var newRecipe = recipe.copy(id = document.id, author = author)
+        var newRecipe = recipe.copy(id = document.id, author = author, authorId = authorId)
 
         val currentRecipe = dao.getRecipeById(recipe.id)
         var newImageUri = Uri.parse(recipe.imagePath)

@@ -22,6 +22,8 @@ import com.example.recipeswapper.ui.screens.badges.BadgesScreen
 import com.example.recipeswapper.ui.screens.eventdetails.EventDetailsScreen
 import com.example.recipeswapper.ui.screens.category.CategoriesScreen
 import com.example.recipeswapper.ui.screens.category.CategoriesViewModel
+import com.example.recipeswapper.ui.screens.categorydetails.CategoryDetailsScreen
+import com.example.recipeswapper.ui.screens.categorydetails.CategoryDetailsViewModel
 import com.example.recipeswapper.ui.screens.user.UserScreen
 import com.example.recipeswapper.ui.screens.user.UserViewModel
 import com.example.recipeswapper.ui.screens.recipedetails.RecipeDetailsScreen
@@ -44,6 +46,7 @@ sealed interface RecipeSwapperRoute {
     @Serializable data object AddEvent: RecipeSwapperRoute
     @Serializable data object Categories: RecipeSwapperRoute
     @Serializable data class EditRecipe(val recipeId: String) : RecipeSwapperRoute
+    @Serializable data object CategoryDetails : RecipeSwapperRoute
 }
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -68,6 +71,7 @@ fun RecipeSwapperNavGraph(
 
     val categoriesViewModel = koinViewModel<CategoriesViewModel>()
     categoriesViewModel.actions.updateCategoriesDB()
+    val categoryDetailsViewModel = koinViewModel<CategoryDetailsViewModel>()
 
     val currentUser = FirebaseAuth.getInstance().currentUser
 
@@ -189,12 +193,19 @@ fun RecipeSwapperNavGraph(
 
         composable<RecipeSwapperRoute.Categories> {
             val state by categoriesViewModel.state.collectAsStateWithLifecycle()
-            CategoriesScreen(state, categoriesViewModel.actions, navController,
+            CategoriesScreen(state, navController,
                 onFilter = { category ->
-                    recipesViewModel.actions.setCategoryFilter(category)
-                    //navController.navigate(RecipeSwapperRoute.Home)
+                    categoryDetailsViewModel.actions.setCategoryFilter(category)
+                    navController.navigate(RecipeSwapperRoute.CategoryDetails)
                 }
             )
+        }
+
+        composable<RecipeSwapperRoute.CategoryDetails> {
+            val state by categoryDetailsViewModel.state.collectAsStateWithLifecycle()
+            CategoryDetailsScreen(state, navController, onRecipeClick = { recipeId ->
+                navController.navigate(RecipeSwapperRoute.RecipeDetails(recipeId))
+            }, userViewModel.actions, userState)
         }
 
         composable<RecipeSwapperRoute.EditRecipe> { backStackEntry ->
