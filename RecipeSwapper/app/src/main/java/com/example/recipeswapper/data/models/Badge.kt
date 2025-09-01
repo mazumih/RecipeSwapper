@@ -5,7 +5,9 @@ import com.example.recipeswapper.data.database.BadgeEntity
 
 enum class BadgeType {
     Recipes,
-    Favourites
+    Favourites,
+    Events,
+    Dolci
 }
 
 data class Badge(
@@ -46,7 +48,9 @@ fun Badge.toEntity() : BadgeEntity {
 fun getBadgeIcon(icon: String): Int {
     val badgeIcons = mapOf(
         "ic_badge1" to R.drawable.bree_badge,
-        "ic_badge2" to R.drawable.susan_badge
+        "ic_badge2" to R.drawable.susan_badge,
+        "ic_badge3" to R.drawable.lynette_badge,
+        "ic_badge4" to R.drawable.gabrielle_badge
     )
     return badgeIcons[icon] ?: R.drawable.icona2
 }
