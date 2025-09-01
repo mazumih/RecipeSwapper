@@ -71,6 +71,12 @@ interface EventDao {
     @Upsert
     suspend fun upsertEvent(event: EventEntity)
 
+    @Query("SELECT * FROM EventEntity WHERE id = :eventId")
+    suspend fun getEvent(eventId: String): EventEntity?
+
+    @Delete
+    suspend fun deleteEvent(event: EventEntity)
+
     @Query("SELECT * FROM EventEntity WHERE host = :userId")
     suspend fun getUserEvents(userId: String): List<EventEntity>
 }

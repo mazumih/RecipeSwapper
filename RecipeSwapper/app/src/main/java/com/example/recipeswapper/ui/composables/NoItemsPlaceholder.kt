@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.DoNotDisturbAlt
 import androidx.compose.material.icons.outlined.NoFood
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -23,18 +24,18 @@ fun NoItemsPlaceholder(modifier: Modifier = Modifier) {
         modifier = Modifier.fillMaxSize()
     ) {
         Icon(
-            Icons.Outlined.NoFood, "No Food Icon",
+            Icons.Outlined.DoNotDisturbAlt, "No Food Icon",
             modifier = Modifier.padding(bottom = 16.dp).size(48.dp),
             tint = MaterialTheme.colorScheme.secondary
         )
         Text(
-            "No Recipes",
+            "No content",
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.padding(bottom = 8.dp)
         )
         Text(
-            "Tap the + button to add a new recipe.",
+            "Wait for someone to add something!",
             style = MaterialTheme.typography.bodyLarge
         )
     }

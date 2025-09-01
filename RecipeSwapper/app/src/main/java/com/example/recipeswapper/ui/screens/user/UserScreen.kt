@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,6 +29,7 @@ import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FloatingActionButton
@@ -55,11 +57,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.recipeswapper.data.models.Event
 import com.example.recipeswapper.data.models.Recipe
+import com.example.recipeswapper.ui.EventsActions
+import com.example.recipeswapper.ui.EventsState
 import com.example.recipeswapper.ui.RecipeSwapperRoute
 import com.example.recipeswapper.ui.RecipesState
 import com.example.recipeswapper.ui.composables.AppBar
+import com.example.recipeswapper.ui.composables.EventRow
 import com.example.recipeswapper.ui.composables.GridItem
+import com.example.recipeswapper.ui.composables.NoItemsPlaceholder
 import com.example.recipeswapper.ui.composables.RecipeCard
 import com.example.recipeswapper.ui.theme.Typography
 import com.example.recipeswapper.ui.theme.primary
@@ -70,13 +77,24 @@ import com.example.recipeswapper.utils.rememberGalleryLauncher
 fun UserScreen(
     state: UserState,
     recipesState: RecipesState,
+    eventsState: EventsState,
+    eventActions: EventsActions,
+    onEventClick: (String) -> Unit,
     onRecipeClick: (String) -> Unit,
     actions: UserActions,
     logout: () -> Unit,
     navController: NavController
 ) {
+    val user = state.currentUser!!
+    val userEvents = eventsState.events
+        .filter { it.participants.contains(user.id) || it.host == user.id }
+        .map { UserContent.EventItem(it) }
 
-    val user = state.currentUser
+    val userRecipes = recipesState.recipes
+        .filter { it.author == user.id }
+        .map { UserContent.RecipeItem(it) }
+
+    val allItems = userEvents + userRecipes
 
     val cameraLauncher = rememberCameraLauncher(
         onPictureTaken = {
@@ -84,11 +102,9 @@ fun UserScreen(
                 actions.setImage(imageUri)
         }
     )
-
     val galleryLauncher = rememberGalleryLauncher(
         onImagePicked = { imageUri -> actions.setImage(imageUri) }
     )
-
     var showImageOptions by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -100,116 +116,110 @@ fun UserScreen(
             ) {
                 Icon(Icons.Outlined.Groups, contentDescription = "Add Event")
             }
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.background
     ) { contentPadding ->
-        if(user != null) {
-            LazyColumn (
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .padding(contentPadding)
-                    .padding(12.dp)
-                    .fillMaxSize()
-            ) {
-                item {
-                    Box(
-                        contentAlignment = Alignment.BottomEnd
-                    ) {
-                        if (user.profileImage != "") {
-                            AsyncImage(
-                                model = Uri.parse(user.profileImage),
-                                contentDescription = "Foto profilo",
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .size(100.dp)
-                                    .clip(CircleShape)
-                            )
-                        } else {
-                            Icon(
-                                imageVector = Icons.Outlined.AccountCircle,
-                                contentDescription = "Placeholder profilo",
-                                modifier = Modifier
-                                    .size(100.dp)
-                                    .clip(CircleShape)
-                            )
-                        }
-
-                        Box(
+        LazyColumn (
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .padding(contentPadding)
+                .padding(12.dp)
+                .fillMaxSize()
+        ) {
+            item {
+                Box(contentAlignment = Alignment.BottomEnd) {
+                    if (user.profileImage != "") {
+                        AsyncImage(
+                            model = Uri.parse(user.profileImage),
+                            contentDescription = "Foto profilo",
+                            contentScale = ContentScale.Crop,
                             modifier = Modifier
-                                .size(28.dp) // dimensione effettiva del bottone
-                                .background(primary, CircleShape)
-                                .border(2.dp, Color.White, CircleShape)
-                                .clickable { showImageOptions = true },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                Icons.Filled.Add,
-                                contentDescription = "Add image",
-                                modifier = Modifier.size(ButtonDefaults.IconSize),
-                                tint = Color.White
-                            )
-                        }
-                    }
-
-                    Spacer(Modifier.size(8.dp))
-
-                    Text(
-                        style = Typography.headlineMedium,
-                        text = user.username
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Button(
-                        onClick = { navController.navigate(RecipeSwapperRoute.Badges) }
-                    ) {
-                        Text("Badges")
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Button(onClick = {
-                        logout()
-                    }) {
-                        Text("Logout")
-                    }
-
-                    if (showImageOptions) {
-                        AlertDialog(
-                            onDismissRequest = { showImageOptions = false },
-                            title = { Text("Scegli immagine") },
-                            text = { Text("Scatta una foto o scegli dalla galleria") },
-                            confirmButton = {
-                                TextButton(
-                                    onClick = {
-                                        showImageOptions = false
-                                        cameraLauncher.captureImage()
-                                    }
-                                ) {
-                                    Text("Fotocamera")
-                                }
-                            },
-                            dismissButton = {
-                                TextButton(
-                                    onClick = {
-                                        showImageOptions = false
-                                        galleryLauncher.pickImage()
-                                    }
-                                ) {
-                                    Text("Galleria")
-                                }
-                            }
+                                .size(100.dp)
+                                .clip(CircleShape)
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Outlined.AccountCircle,
+                            contentDescription = "Placeholder profilo",
+                            modifier = Modifier
+                                .size(100.dp)
+                                .clip(CircleShape)
                         )
                     }
-                    Text(
-                        text = "Le mie ricette",
-                        style = MaterialTheme.typography.titleLarge
+                    Box(
+                        modifier = Modifier
+                            .size(28.dp) // dimensione effettiva del bottone
+                            .background(primary, CircleShape)
+                            .border(2.dp, Color.White, CircleShape)
+                            .clickable { showImageOptions = true },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            Icons.Filled.Add,
+                            contentDescription = "Add image",
+                            modifier = Modifier.size(ButtonDefaults.IconSize),
+                            tint = Color.White
+                        )
+                    }
+                }
+                Spacer(Modifier.size(8.dp))
+                Text(
+                    style = Typography.headlineMedium,
+                    text = user.username
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(
+                    onClick = { navController.navigate(RecipeSwapperRoute.Badges) }
+                ) {
+                    Text("Badges")
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(onClick = {
+                    logout()
+                }) {
+                    Text("Logout")
+                }
+                if (showImageOptions) {
+                    AlertDialog(
+                        onDismissRequest = { showImageOptions = false },
+                        title = { Text("Scegli immagine") },
+                        text = { Text("Scatta una foto o scegli dalla galleria") },
+                        confirmButton = {
+                            TextButton(
+                                onClick = {
+                                    showImageOptions = false
+                                    cameraLauncher.captureImage()
+                                }
+                            ) {
+                                Text("Fotocamera")
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(
+                                onClick = {
+                                    showImageOptions = false
+                                    galleryLauncher.pickImage()
+                                }
+                            ) {
+                                Text("Galleria")
+                            }
+                        }
                     )
                 }
-                items(recipesState.recipes) { recipe ->
-                    RecipeCard(
-                        recipe,
-                        onClick = { onRecipeClick(recipe.id) },
+                if (allItems.isEmpty()) {
+                    NoItemsPlaceholder(Modifier.padding(contentPadding))
+                }
+            }
+            items(allItems) { item ->
+                when (item) {
+                    is UserContent.EventItem -> EventRow(
+                        event = item.event,
+                        onClick = { onEventClick(item.event.id) }
+                    )
+                    is UserContent.RecipeItem -> RecipeCard(
+                        recipe = item.recipe,
+                        onClick = { onRecipeClick(item.recipe.id) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(180.dp)

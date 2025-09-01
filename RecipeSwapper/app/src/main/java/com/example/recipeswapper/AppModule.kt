@@ -29,6 +29,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.koin.dsl.module
 import org.koin.core.module.dsl.viewModel
+import org.koin.core.scope.get
 
 val Context.dataStore by preferencesDataStore("theme")
 
@@ -75,5 +76,5 @@ val appModule = module {
     viewModel { AddRecipeViewModel(get(), get()) }
     viewModel { BadgesViewModel(get()) }
     viewModel { EventsViewModel(get()) }
-    viewModel { AddEventViewModel() }
+    viewModel { AddEventViewModel(get()) }
 }
