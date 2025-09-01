@@ -114,7 +114,7 @@ fun AddEventScreen(
                 recipe.author != host
     }
     val hostRecipes = recipesState.recipes.filter { recipe ->
-        recipe.author == host
+        recipe.authorId == host
     }
     val recipes = favouriteRecipes + hostRecipes
 

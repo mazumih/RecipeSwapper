@@ -93,7 +93,7 @@ import com.example.recipeswapper.utils.rememberMultiplePermissions
 
     val user = userState.currentUser
     val recipes = recipesState.filteredRecipes.filter { recipe ->
-        recipe.author != (user?.id ?: "")
+        recipe.authorId != (user?.id ?: "")
     }
 
     val events = eventsState.events.filter { event ->

@@ -70,7 +70,7 @@ fun EventDetailsScreen (
                 )
             )
         },
-        bottomBar = { BottomBar(navController, "Event Details") },
+        bottomBar = { BottomBar(navController, null) },
         floatingActionButton = {
             FloatingActionButton(
                 containerColor = MaterialTheme.colorScheme.tertiary,

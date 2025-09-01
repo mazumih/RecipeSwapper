@@ -92,7 +92,7 @@ fun UserScreen(
         .map { UserContent.EventItem(it) }
 
     val userRecipes = recipesState.recipes
-        .filter { it.author == user.id }
+        .filter { it.authorId == user.id }
         .map { UserContent.RecipeItem(it) }
 
     val allItems = userEvents + userRecipes

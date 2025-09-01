@@ -17,6 +17,7 @@ data class AddRecipeState(
     val id: String = "",
     val title: String = "",
     val description: String = "",
+    val authorId: String = "",
     val author: String = "",
     val imageURI: Uri = Uri.EMPTY,
     val ingredients: List<Ingredient> = emptyList(),
@@ -35,6 +36,7 @@ data class AddRecipeState(
         title = title,
         description =  description,
         imagePath = imageURI.toString(),
+        authorId = authorId,
         author = author,
         ingredients = ingredients,
         category = category,
@@ -57,7 +59,7 @@ interface AddRecipeActions {
     fun setPortions(portions: Int)
     fun setPrepTime(prepTime: Int)
     fun setDifficulty(difficulty: String)
-    fun addRecipe(recipe: Recipe, author: String, notifier: NotificationHelper)
+    fun addRecipe(recipe: Recipe, authorId: String, author: String, notifier: NotificationHelper)
     fun updateRecipe(recipe: Recipe)
     fun loadRecipe(recipe: Recipe)
 }
@@ -121,16 +123,16 @@ class AddRecipeViewModel(
             _state.update { it.copy(difficulty = difficulty) }
         }
 
-        override fun addRecipe(recipe: Recipe, author: String, notifier: NotificationHelper) {
+        override fun addRecipe(recipe: Recipe, authorId: String, author: String, notifier: NotificationHelper) {
             viewModelScope.launch {
-                recipesRepository.upsertRecipe(recipe, author)
+                recipesRepository.upsertRecipe(recipe, author, authorId)
                 badgesRepository.checkBadges(author, notifier)
             }
         }
 
         override fun updateRecipe(recipe: Recipe) {
             viewModelScope.launch {
-                recipesRepository.upsertRecipe(recipe, recipe.author)
+                recipesRepository.upsertRecipe(recipe, recipe.author, recipe.authorId)
             }
         }
 
@@ -142,6 +144,7 @@ class AddRecipeViewModel(
                     description = recipe.description,
                     imageURI = Uri.parse(recipe.imagePath),
                     author = recipe.author,
+                    authorId = recipe.authorId,
                     ingredients = recipe.ingredients,
                     category = recipe.category,
                     recipe = recipe.recipe,

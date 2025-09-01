@@ -100,7 +100,7 @@ fun RecipeDetailsScreen(
     val notifier = NotificationHelper(ctx)
     val favouriteRecipes = currentUser?.favouriteRecipes ?: emptyList()
     val isFavourite = remember(favouriteRecipes) { derivedStateOf { favouriteRecipes.contains(recipe.id) } }
-    val canEdit = currentUser?.id == recipe.author
+    val canEdit = currentUser?.id == recipe.authorId
 
     val hours = recipe.prepTime / 60
     val minutes = recipe.prepTime % 60

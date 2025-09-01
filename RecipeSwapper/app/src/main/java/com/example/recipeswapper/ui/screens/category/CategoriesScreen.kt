@@ -19,7 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,15 +36,11 @@ import com.example.recipeswapper.ui.composables.TopBar
 @Composable
 fun CategoriesScreen(
     state: CategoriesState,
-    actions: CategoriesActions,
     navController: NavController,
     onFilter: (Category) -> Unit
 ) {
-    LaunchedEffect(Unit) {
-        actions.updateCategoriesDB()
-    }
 
-    val orderedCategories = state.categories.sortedBy {
+   val orderedCategories = state.categories.sortedBy {
         CATEGORY_ORDER.indexOf(it.name)
     }
 

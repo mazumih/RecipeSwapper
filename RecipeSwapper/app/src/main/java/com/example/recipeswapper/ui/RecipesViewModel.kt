@@ -14,22 +14,16 @@ import kotlinx.coroutines.launch
 
 data class RecipesState(
     val recipes: List<Recipe> = emptyList(),
-    var search: String = "",
-    val category: Category? = null
+    var search: String = ""
 ) {
     val filteredRecipes: List<Recipe>
-        get() = recipes.filter { recipe ->
-            val searchFilter = search.isBlank() || recipe.title.contains(search, ignoreCase = true)
-            val categoryFilter = category == null || recipe.category.equals(category.name)
-            searchFilter && categoryFilter
-        }
+        get() = recipes.filter { recipe -> search.isBlank() || recipe.title.contains(search, ignoreCase = true) }
 }
 
 interface RecipesActions {
     fun updateRecipesDB()
     fun updateSearch(query: String)
     fun deleteRecipe(recipe: Recipe)
-    fun setCategoryFilter(category: Category)
 }
 
 class RecipesViewModel(
@@ -39,8 +33,6 @@ class RecipesViewModel(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
 
-    private val _categoryFilter = MutableStateFlow<Category?>(null)
-
     val state = recipesRepository.getAllRecipes()
         .combine(_searchQuery) { recipes, query ->
             RecipesState(
@@ -48,7 +40,6 @@ class RecipesViewModel(
                 search = query
             )
         }
-        .combine(_categoryFilter) { recipesState, category -> recipesState.copy(category = category) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
@@ -71,10 +62,6 @@ class RecipesViewModel(
             viewModelScope.launch {
                 recipesRepository.deleteRecipe(recipe)
             }
-        }
-
-        override fun setCategoryFilter(category: Category) {
-            _categoryFilter.value = category
         }
     }
 }

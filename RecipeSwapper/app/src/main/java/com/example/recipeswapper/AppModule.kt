@@ -19,6 +19,7 @@ import com.example.recipeswapper.ui.screens.addrecipe.AddRecipeViewModel
 import com.example.recipeswapper.ui.screens.authentication.AuthViewModel
 import com.example.recipeswapper.ui.BadgesViewModel
 import com.example.recipeswapper.ui.screens.category.CategoriesViewModel
+import com.example.recipeswapper.ui.screens.categorydetails.CategoryDetailsViewModel
 import com.example.recipeswapper.ui.screens.user.UserViewModel
 import com.example.recipeswapper.ui.screens.settings.SettingsViewModel
 import com.google.firebase.Firebase
@@ -81,4 +82,5 @@ val appModule = module {
     viewModel { EventsViewModel(get()) }
     viewModel { AddEventViewModel(get()) }
     viewModel { CategoriesViewModel(get()) }
+    viewModel { CategoryDetailsViewModel(get()) }
 }
