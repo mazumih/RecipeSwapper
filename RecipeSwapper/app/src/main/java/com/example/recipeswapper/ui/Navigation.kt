@@ -54,6 +54,7 @@ fun RecipeSwapperNavGraph(
 ) {
     val recipesViewModel = koinViewModel<RecipesViewModel>()
     val recipesState by recipesViewModel.state.collectAsStateWithLifecycle()
+    recipesViewModel.actions.updateRecipesDB()
 
     val userViewModel = koinViewModel<UserViewModel>()
     val userState by userViewModel.state.collectAsStateWithLifecycle()
@@ -86,7 +87,6 @@ fun RecipeSwapperNavGraph(
                            eventsViewModel.actions.updateSearch(query)},
                 userViewModel.actions,
                 userState,
-                recipesViewModel.actions,
                 eventsState,
                 onEventClick = { eventId ->
                     navController.navigate(RecipeSwapperRoute.EventDetails(eventId))

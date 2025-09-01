@@ -65,14 +65,9 @@ import com.example.recipeswapper.utils.rememberMultiplePermissions
     onSearch: (String) -> Unit,
     userActions: UserActions,
     userState: UserState,
-    recipesActions: RecipesActions,
     eventsState: EventsState,
     onEventClick: (String) -> Unit
     ) {
-
-    LaunchedEffect(Unit) {
-        recipesActions.updateRecipesDB()
-    }
     var isSearching by remember { mutableStateOf(false) }
 
     var selected by rememberSaveable { mutableStateOf(0) }
